@@ -1,0 +1,83 @@
+@model EsportsTournament.Models.Tournament
+
+@{
+    ViewData["Title"] = "Edit Tournament";
+}
+
+<h1>Edit Tournament</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0">Edit Tournament Details</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Game" class="control-label"></label>
+                        <input asp-for="Game" class="form-control" />
+                        <span asp-validation-for="Game" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="StartDate" class="control-label"></label>
+                        <input asp-for="StartDate" class="form-control" type="datetime-local" />
+                        <span asp-validation-for="StartDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="MaxParticipants" class="control-label"></label>
+                        <select asp-for="MaxParticipants" class="form-control">
+                            <option value="4">4 participants</option>
+                            <option value="8">8 participants</option>
+                            <option value="16">16 participants</option>
+                            <option value="32">32 participants</option>
+                            <option value="64">64 participants</option>
+                        </select>
+                        <span asp-validation-for="MaxParticipants" class="text-danger"></span>
+                    </div>
+                    <div class="form-group form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" asp-for="IsOpen" /> @Html.DisplayNameFor(model => model.IsOpen)
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Editing Guidelines</h5>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li>You can only edit tournaments that haven't started yet.</li>
+                    <li>Changing the maximum participants may affect registration.</li>
+                    <li>Unchecking "Is Open" will close registration but won't start the tournament.</li>
+                    <li>To start the tournament, use the "Start Tournament" button on the details page.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

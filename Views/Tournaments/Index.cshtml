@@ -1,0 +1,53 @@
+@model IEnumerable<EsportsTournament.Models.Tournament>
+
+@{
+    ViewData["Title"] = "Tournaments";
+}
+
+<h1>Tournaments</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Tournament</a>
+</p>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header @(item.IsOpen ? "bg-success" : "bg-secondary") text-white">
+                    <h5 class="mb-0">@item.Name</h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">@item.Game</h6>
+                    <p class="card-text">@(item.Description?.Length > 100 ? item.Description.Substring(0, 100) + "..." : item.Description)</p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            Created by: @item.Creator.UserName<br />
+                            Start Date: @item.StartDate.ToString("MMM dd, yyyy")<br />
+                            Max Participants: @item.MaxParticipants<br />
+                            Status: @(item.IsOpen ? "Open" : "Closed")
+                        </small>
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,90 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+}
+
+/* Tournament Bracket Styles */
+.tournament-bracket {
+  overflow-x: auto;
+  padding: 20px 0;
+}
+
+.bracket-container {
+  display: flex;
+  justify-content: flex-start;
+  min-width: 100%;
+}
+
+.round {
+  display: flex;
+  flex-direction: column;
+  margin-right: 40px;
+  min-width: 200px;
+}
+
+.round-title {
+  text-align: center;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.match {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.match.completed {
+  background-color: #f8f9fa;
+}
+
+.match-upper,
+.match-lower {
+  padding: 8px 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.match-upper.winner,
+.match-lower.winner {
+  background-color: #d4edda;
+  font-weight: bold;
+}
+
+.match-actions {
+  padding: 8px;
+  background-color: #f8f9fa;
+  text-align: center;
+}

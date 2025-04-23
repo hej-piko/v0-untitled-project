@@ -1,0 +1,243 @@
+@model EsportsTournament.Models.Tournament
+@using Microsoft.AspNetCore.Identity
+@using EsportsTournament.Models
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = Model.Name;
+    var currentUser = await UserManager.GetUserAsync(User);
+    var isCreator = currentUser != null && Model.CreatorId == currentUser.Id;
+    var isParticipant = currentUser != null && Model.Participants.Any(p => p.UserId == currentUser.Id);
+    var canJoin = currentUser != null && Model.IsOpen && !isParticipant && Model.Participants.Count < Model.MaxParticipants;
+}
+
+<h1>@Model.Name</h1>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Tournament Details</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Game:</strong> @Model.Game</p>
+                <p><strong>Description:</strong> @Model.Description</p>
+                <p><strong>Start Date:</strong> @Model.StartDate.ToString("MMM dd, yyyy HH:mm")</p>
+                <p><strong>Created By:</strong> @Model.Creator.UserName</p>
+                <p><strong>Status:</strong> @(Model.IsOpen ? "Open for Registration" : "Registration Closed")</p>
+                <p><strong>Participants:</strong> @Model.Participants.Count / @Model.MaxParticipants</p>
+                
+                @if (canJoin)
+                {
+                    <form asp-action="Join" asp-route-id="@Model.Id" method="post">
+                        <button type="submit" class="btn btn-success btn-block">Join Tournament</button>
+                    </form>
+                }
+                else if (isParticipant)
+                {
+                    <div class="alert alert-info">You are registered for this tournament.</div>
+                }
+                
+                @if (isCreator && Model.IsOpen)
+                {
+                    <div class="mt-3">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-block">Edit Tournament</a>
+                        <form asp-action="StartTournament" asp-route-id="@Model.Id" method="post" class="mt-2">
+                            <button type="submit" class="btn btn-danger btn-block">Start Tournament</button>
+                        </form>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Participants</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.Participants.Any())
+                {
+                    <ul class="list-group">
+                        @foreach (var participant in Model.Participants.OrderBy(p => p.JoinedAt))
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                @participant.User.UserName
+                                @if (!Model.IsOpen && participant.Seed.HasValue)
+                                {
+                                    <span class="badge badge-primary badge-pill">Seed #@participant.Seed</span>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-center">No participants yet.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Tournament Bracket</h5>
+            </div>
+            <div class="card-body">
+                @if (!Model.IsOpen && Model.Matches.Any())
+                {
+                    <div class="tournament-bracket">
+                        @{
+                            var rounds = Model.Matches.Select(m => m.Round).Distinct().OrderBy(r => r).ToList();
+                            var maxRound = rounds.Max();
+                        }
+
+                        <div class="bracket-container">
+                            @foreach (var round in rounds)
+                            {
+                                <div class="round">
+                                    <h5 class="round-title">
+                                        @if (round == 1) { <span>First Round</span> }
+                                        else if (round == maxRound) { <span>Final</span> }
+                                        else if (round == maxRound - 1) { <span>Semifinals</span> }
+                                        else if (round == maxRound - 2) { <span>Quarterfinals</span> }
+                                        else { <span>Round @round</span> }
+                                    </h5>
+                                    
+                                    @foreach (var match in Model.Matches.Where(m => m.Round == round).OrderBy(m => m.MatchNumber))
+                                    {
+                                        <div class="match @(match.IsCompleted ? "completed" : "")">
+                                            <div class="match-upper @(match.WinnerId == match.Participant1Id ? "winner" : "")">
+                                                @if (match.Participant1Id.HasValue)
+                                                {
+                                                    var p1 = Model.Participants.FirstOrDefault(p => p.Id == match.Participant1Id);
+                                                    <span>@p1.User.UserName</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>TBD</span>
+                                                }
+                                            </div>
+                                            <div class="match-lower @(match.WinnerId == match.Participant2Id ? "winner" : "")">
+                                                @if (match.Participant2Id.HasValue)
+                                                {
+                                                    var p2 = Model.Participants.FirstOrDefault(p => p.Id == match.Participant2Id);
+                                                    <span>@p2.User.UserName</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>TBD</span>
+                                                }
+                                            </div>
+                                            
+                                            @if (isCreator && !match.IsCompleted && match.Participant1Id.HasValue && match.Participant2Id.HasValue)
+                                            {
+                                                <div class="match-actions">
+                                                    <form asp-action="UpdateMatch" method="post">
+                                                        <input type="hidden" name="matchId" value="@match.Id" />
+                                                        <input type="hidden" name="tournamentId" value="@Model.Id" />
+                                                        <div class="btn-group btn-group-sm">
+                                                            <button type="submit" name="winnerId" value="@match.Participant1Id" class="btn btn-outline-primary">
+                                                                P1 Wins
+                                                            </button>
+                                                            <button type="submit" name="winnerId" value="@match.Participant2Id" class="btn btn-outline-primary">
+                                                                P2 Wins
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (!Model.IsOpen)
+                {
+                    <p class="text-center">Bracket is being generated...</p>
+                }
+                else
+                {
+                    <p class="text-center">Tournament hasn't started yet. Bracket will be generated when the tournament begins.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>
+
+@section Styles {
+    <style>
+        .tournament-bracket {
+            overflow-x: auto;
+            padding: 20px 0;
+        }
+        
+        .bracket-container {
+            display: flex;
+            justify-content: flex-start;
+            min-width: 100%;
+        }
+        
+        .round {
+            display: flex;
+            flex-direction: column;
+            margin-right: 40px;
+            min-width: 200px;
+        }
+        
+        .round-title {
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .match {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .match.completed {
+            background-color: #f8f9fa;
+        }
+        
+        .match-upper, .match-lower {
+            padding: 8px 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .match-upper.winner, .match-lower.winner {
+            background-color: #d4edda;
+            font-weight: bold;
+        }
+        
+        .match-actions {
+            padding: 8px;
+            background-color: #f8f9fa;
+            text-align: center;
+        }
+    </style>
+}

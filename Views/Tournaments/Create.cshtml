@@ -1,0 +1,78 @@
+@model EsportsTournament.Models.Tournament
+
+@{
+    ViewData["Title"] = "Create Tournament";
+}
+
+<h1>Create Tournament</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Tournament Details</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Game" class="control-label"></label>
+                        <input asp-for="Game" class="form-control" />
+                        <span asp-validation-for="Game" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="StartDate" class="control-label"></label>
+                        <input asp-for="StartDate" class="form-control" type="datetime-local" />
+                        <span asp-validation-for="StartDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="MaxParticipants" class="control-label"></label>
+                        <select asp-for="MaxParticipants" class="form-control">
+                            <option value="4">4 participants</option>
+                            <option value="8">8 participants</option>
+                            <option value="16">16 participants</option>
+                            <option value="32">32 participants</option>
+                            <option value="64">64 participants</option>
+                        </select>
+                        <span asp-validation-for="MaxParticipants" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Tournament Guidelines</h5>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li>Tournaments use a single elimination bracket format.</li>
+                    <li>Seeding is based on first-come, first-serve registration.</li>
+                    <li>You can start the tournament manually or wait until it's full.</li>
+                    <li>Once started, the bracket cannot be modified.</li>
+                    <li>Only the tournament creator can update match results.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

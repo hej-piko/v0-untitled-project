@@ -1,0 +1,73 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to Esports Tournament Bracket System</h1>
+    <p>Create and join esports tournaments with automatic bracket generation.</p>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Upcoming Tournaments</h5>
+            </div>
+            <div class="card-body">
+                @if (ViewBag.UpcomingTournaments != null && ViewBag.UpcomingTournaments.Count > 0)
+                {
+                    <div class="list-group">
+                        @foreach (var tournament in ViewBag.UpcomingTournaments)
+                        {
+                            <a href="@Url.Action("Details", "Tournaments", new { id = tournament.Id })" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">@tournament.Name</h5>
+                                    <small>@tournament.StartDate.ToString("MMM dd, yyyy")</small>
+                                </div>
+                                <p class="mb-1">@tournament.Game</p>
+                                <small>Max Participants: @tournament.MaxParticipants</small>
+                            </a>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-center">No upcoming tournaments.</p>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Active Tournaments</h5>
+            </div>
+            <div class="card-body">
+                @if (ViewBag.ActiveTournaments != null && ViewBag.ActiveTournaments.Count > 0)
+                {
+                    <div class="list-group">
+                        @foreach (var tournament in ViewBag.ActiveTournaments)
+                        {
+                            <a href="@Url.Action("Details", "Tournaments", new { id = tournament.Id })" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">@tournament.Name</h5>
+                                    <small>Started: @tournament.StartDate.ToString("MMM dd, yyyy")</small>
+                                </div>
+                                <p class="mb-1">@tournament.Game</p>
+                            </a>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-center">No active tournaments.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a asp-controller="Tournaments" asp-action="Create" class="btn btn-primary btn-lg">Create Tournament</a>
+    <a asp-controller="Tournaments" asp-action="Index" class="btn btn-secondary btn-lg ml-2">View All Tournaments</a>
+</div>
