@@ -4,7 +4,7 @@
 @inject UserManager<ApplicationUser> UserManager
 
 <ul class="navbar-nav">
-@if (SignInManager.IsSignIn(User))
+@if (User.Identity.IsAuthenticated)
 {
     <li class="nav-item">
         <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity.Name!</a>
