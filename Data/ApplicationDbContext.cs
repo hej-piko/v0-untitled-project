@@ -6,13 +6,14 @@ using System;
 
 namespace EsportsTournament.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<AspNetUsers>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
 
+        public DbSet<AspNetUsers> AspNetUsers { get; set; }
         public DbSet<Tournament> Tournaments { get; set; }
         public DbSet<Participant> Participants { get; set; }
         public DbSet<Match> Matches { get; set; }

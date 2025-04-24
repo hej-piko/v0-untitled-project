@@ -6,6 +6,9 @@
 // Fix:
 // Ensure that the `ApplicationDbContext` class is defined in your project. If it exists in another namespace, add the appropriate `using` directive at the top of the file. For example:
 using EsportsTournament.Data; // Replace 'YourNamespace.Data' with the actual namespace of ApplicationDbContext.
+using EsportsTournament.Models;
+using Microsoft.AspNetCore.Identity;
+
 
 // Explanation and Fix for Problem 2 (CS1061):
 // The error CS1061 indicates that the `AddDbContext` method is not recognized. This happens because the required Entity Framework Core package is not installed or the necessary `using` directive is missing.
@@ -26,10 +29,13 @@ internal class Program
         builder.Services.AddControllersWithViews();
 
         // Add DbContext to the container.
-
-        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(connectionString));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+        builder.Services.AddIdentity<AspNetUsers, IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
+
 
 
         // Configure the HTTP request pipeline.
@@ -49,7 +55,7 @@ internal class Program
 
         app.MapControllerRoute(
             name: "default",
-            pattern: "{controller=Home}/{action=Index}/{id?}")
+            pattern: "{controller=Account}/{action=SampleLogin}/{id?}")
             .WithStaticAssets();
 
         app.Run();

@@ -27,8 +27,9 @@ namespace EsportsTournament.Models
         
         [Required]
         public string CreatorId { get; set; }
-        public virtual ApplicationUser Creator { get; set; }
-        
+        public virtual AspNetUsers Creator { get; set; } // This should be the ID of the user who created the tournament
+        //public virtual ApplicationUser Creator { get; set; }
+
         public virtual ICollection<Participant> Participants { get; set; }
         public virtual ICollection<Match> Matches { get; set; }
     }

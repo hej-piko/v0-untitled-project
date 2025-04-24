@@ -22,20 +22,20 @@ namespace EsportsTournament.Controllers
 
         public async Task<IActionResult> Index()
         {
-            //var upcomingTournaments = await _context.Tournaments
-            //    .Where(t => t.IsOpen)
-            //    .OrderBy(t => t.StartDate)
-            //    .Take(5)
-            //    .ToListAsync();
+            var upcomingTournaments = await _context.Tournaments
+                .Where(t => t.IsOpen)
+                .OrderBy(t => t.StartDate)
+                .Take(5)
+                .ToListAsync();
 
-            //var activeTournaments = await _context.Tournaments
-            //    .Where(t => !t.IsOpen)
-            //    .OrderByDescending(t => t.StartDate)
-            //    .Take(5)
-            //    .ToListAsync();
+            var activeTournaments = await _context.Tournaments
+                .Where(t => !t.IsOpen)
+                .OrderByDescending(t => t.StartDate)
+                .Take(5)
+                .ToListAsync();
 
-            //ViewBag.UpcomingTournaments = upcomingTournaments;
-            //ViewBag.ActiveTournaments = activeTournaments;
+            ViewBag.UpcomingTournaments = upcomingTournaments;
+            ViewBag.ActiveTournaments = activeTournaments;
 
             return View();
         }
@@ -43,6 +43,17 @@ namespace EsportsTournament.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        public IActionResult SampleLogin()
+        {
+            return View();
+
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

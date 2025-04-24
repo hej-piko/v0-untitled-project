@@ -1,4 +1,4 @@
-using EsportsTournament.Data;
+﻿using EsportsTournament.Data;
 using EsportsTournament.Models;
 using EsportsTournament.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -14,12 +14,12 @@ namespace EsportsTournament.Controllers
     public class TournamentsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<AspNetUsers> _userManager;
         private readonly BracketService _bracketService;
 
         public TournamentsController(
             ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager,
+            UserManager<AspNetUsers> userManager,
             BracketService bracketService)
         {
             _context = context;
@@ -76,13 +76,15 @@ namespace EsportsTournament.Controllers
         {
             if (ModelState.IsValid)
             {
-                tournament.CreatorId = _userManager.GetUserId(User);
+                tournament.CreatorId = _userManager.GetUserId(User);  // ✅ Link the tournament to the logged-in user
                 tournament.IsOpen = true;
-                
+
                 _context.Add(tournament);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Details), new { id = tournament.Id });
             }
+
             return View(tournament);
         }
 
