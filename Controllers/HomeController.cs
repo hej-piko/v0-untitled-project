@@ -22,20 +22,20 @@ namespace EsportsTournament.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var upcomingTournaments = await _context.Tournaments
-                .Where(t => t.IsOpen)
-                .OrderBy(t => t.StartDate)
-                .Take(5)
-                .ToListAsync();
+            //var upcomingTournaments = await _context.Tournaments
+            //    .Where(t => t.IsOpen)
+            //    .OrderBy(t => t.StartDate)
+            //    .Take(5)
+            //    .ToListAsync();
 
-            var activeTournaments = await _context.Tournaments
-                .Where(t => !t.IsOpen)
-                .OrderByDescending(t => t.StartDate)
-                .Take(5)
-                .ToListAsync();
+            //var activeTournaments = await _context.Tournaments
+            //    .Where(t => !t.IsOpen)
+            //    .OrderByDescending(t => t.StartDate)
+            //    .Take(5)
+            //    .ToListAsync();
 
-            ViewBag.UpcomingTournaments = upcomingTournaments;
-            ViewBag.ActiveTournaments = activeTournaments;
+            //ViewBag.UpcomingTournaments = upcomingTournaments;
+            //ViewBag.ActiveTournaments = activeTournaments;
 
             return View();
         }
