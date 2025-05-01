@@ -1,0 +1,45 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<form method="post">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <ul>
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
+    <div class="form-group">
+        <label for="UserName">Username</label>
+        <input type="text" class="form-control" id="UserName" name="UserName" value="Renztgm" required />
+    </div>
+
+    <div class="form-group">
+        <label for="Email">Email</label>
+        <input type="email" class="form-control" id="Email" name="Email" value="Renztgm" required />
+    </div>
+
+    <div class="form-group">
+        <label for="DisplayName">Display Name</label>
+        <input type="text" class="form-control" id="DisplayName" name="DisplayName" value="renz@email.com" required />
+    </div>
+
+    <div class="form-group">
+        <label for="Password">Password</label>
+        <input type="password" class="form-control" id="Password" name="Password" value="Renz12345!" required />
+    </div>
+
+    <div class="form-group">
+        <label for="ConfirmPassword">Confirm Password</label>
+        <input type="password" class="form-control" id="ConfirmPassword" name="ConfirmPassword" value="Renz12345!"  required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>

@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Identity
 @using EsportsTournament.Models
 @inject UserManager<AspNetUsers> UserManager
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     ViewData["Title"] = Model.Name;
@@ -43,7 +44,7 @@
                 
                 @if (canJoin)
                 {
-                    <form asp-action="Join" asp-route-id="@Model.Id" method="post">
+                    <form asp-controller="Tournaments" asp-action="Join" asp-route-id="@Model.Id" method="post">
                         <button type="submit" class="btn btn-success btn-block">Join Tournament</button>
                     </form>
                 }

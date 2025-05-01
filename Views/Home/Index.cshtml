@@ -1,17 +1,15 @@
 @{
     ViewData["Title"] = "Home Page";
+    Layout = "_Layout";
 }
+@* @using Microsoft.AspNetCore.Identity *@
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to Esports Tournament Bracket System</h1>
-    <p>Create and join esports tournaments with automatic bracket generation.</p>
-</div>
-
+<link rel="stylesheet" href="~/css/index.css" />
 <div class="row mt-4">
     <div class="col-md-6">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Upcoming Tournaments</h5>
+                <h5 class="mb-0">Upcoming Tournasments</h5>
             </div>
             <div class="card-body">
                 @if (ViewBag.UpcomingTournaments != null && ViewBag.UpcomingTournaments.Count > 0)
@@ -19,13 +17,13 @@
                     <div class="list-group">
                         @foreach (var tournament in ViewBag.UpcomingTournaments)
                         {
-                            <a href="@Url.Action("Details", "Tournaments", new { id = tournament.Id })" class="list-group-item list-group-item-action">
-                                <div class="d-flex w-100 justify-content-between">
+                            <a href="@Url.Action("Details", "Tournaments", new { id = tournament.Id })" class="list-group-item">
+                                <div class="card-content">
                                     <h5 class="mb-1">@tournament.Name</h5>
                                     <small>@tournament.StartDate.ToString("MMM dd, yyyy")</small>
+                                    <p class="mb-1">@tournament.Game</p>
+                                    <small>Max Participants: @tournament.MaxParticipants</small>
                                 </div>
-                                <p class="mb-1">@tournament.Game</p>
-                                <small>Max Participants: @tournament.MaxParticipants</small>
                             </a>
                         }
                     </div>
@@ -66,14 +64,4 @@
         </div>
     </div>
 </div>
-
-<div class="text-center mt-4">
-    <form asp-controller="Tournaments" asp-action="Create" method="get">
-        <button type="submit" class="btn btn-primary btn-lg">Create Tournament</button>
-    </form>
-
-    <form asp-controller="Tournaments" asp-action="Index" method="get" class="ml-2">
-        <button type="submit" class="btn btn-secondary btn-lg">View All Tournaments</button>
-    </form>
-</div>
-
+<a class="btn btn-primary" href="@Url.Action("Create", "Tournaments")" >Create Tournament</a>

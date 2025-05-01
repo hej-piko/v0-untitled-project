@@ -1,23 +1,10 @@
-// Explanation and Fix for Problem 1 (CS0246):
-// The error CS0246 indicates that the `ApplicationDbContext` class is not recognized. This typically happens because:
-// 1. The `ApplicationDbContext` class is not defined in the project.
-// 2. The namespace containing `ApplicationDbContext` is not imported with a `using` directive.
-
-// Fix:
-// Ensure that the `ApplicationDbContext` class is defined in your project. If it exists in another namespace, add the appropriate `using` directive at the top of the file. For example:
-using EsportsTournament.Data; // Replace 'YourNamespace.Data' with the actual namespace of ApplicationDbContext.
-using EsportsTournament.Models;
+using EsportsTournament.Data; // Ensure the correct namespace for ApplicationDbContext
+using EsportsTournament.Models; // Ensure the correct namespace for AspNetUsers
+using EsportsTournament.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-
-
-// Explanation and Fix for Problem 2 (CS1061):
-// The error CS1061 indicates that the `AddDbContext` method is not recognized. This happens because the required Entity Framework Core package is not installed or the necessary `using` directive is missing.
-
-// Fix:
-// 1. Install the Entity Framework Core package for SQL Server by running the following command in the terminal:
-//    dotnet add package Microsoft.EntityFrameworkCore.SqlServer
-// 2. Add the `using` directive for Entity Framework Core at the top of the file:
 using Microsoft.EntityFrameworkCore;
+using EsportsTournament.Interfaces;
 
 internal class Program
 {
@@ -28,19 +15,37 @@ internal class Program
         // Add services to the container.
         builder.Services.AddControllersWithViews();
 
-        // Add DbContext to the container.
+        // Add DbContext to the container, make sure your connection string is in appsettings.json
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+        // Add Identity and configure it with your custom User class and Entity Framework store
         builder.Services.AddIdentity<AspNetUsers, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders();
+        .AddDefaultTokenProviders();
 
+        //builder.Services.AddScoped<BracketService>();
+        builder.Services.AddScoped<IBracketService, BracketService>();
 
+        builder.Services.ConfigureApplicationCookie(options =>
+        {
+            options.LoginPath = "/Account/SampleLogin";// Redirect here if not authenticated
+            options.LogoutPath = "/Account/Logout";
+            options.AccessDeniedPath = "/Account/AccessDenied"; // Optional: for [Authorize(Roles = "...")]
+        });
 
-        // Configure the HTTP request pipeline.
+        builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                // Optional: Configure the cookie options if needed
+                options.LoginPath = "/Account/SampleLogin";  // Define the path for the login page
+                options.LogoutPath = "/Account/Logout";  // Define the path for the logout action
+            });
+
+        // Configure the HTTP request pipeline. 
         var app = builder.Build();
-
+            
+        // Exception handling for non-development environment
         if (!app.Environment.IsDevelopment())
         {
             app.UseExceptionHandler("/Home/Error");
@@ -48,14 +53,16 @@ internal class Program
         }
 
         app.UseHttpsRedirection();
+        app.UseStaticFiles();
         app.UseRouting();
+        app.UseAuthentication();
         app.UseAuthorization();
 
+        // Static assets and controller route mapping
         app.MapStaticAssets();
-
         app.MapControllerRoute(
             name: "default",
-            pattern: "{controller=Account}/{action=SampleLogin}/{id?}")
+            pattern: "{controller=Index}/{action=Landing}/{id?}")
             .WithStaticAssets();
 
         app.Run();

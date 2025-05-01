@@ -1,10 +1,14 @@
 ﻿using EsportsTournament.Data;
 using EsportsTournament.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNet.Identity.Owin;
 
 public class AccountController : Controller
 {
@@ -32,41 +36,67 @@ public class AccountController : Controller
     public async Task<IActionResult> SampleLogin(LoginViewModel model)
     {
         if (!ModelState.IsValid)
-        {
             return View(model);
-        }
 
-        // Find the user by username using EF Core
-        var user = await _context.AspNetUsers
-            .FirstOrDefaultAsync(l => l.UserName == model.UserName);
+        var result = await _signInManager.PasswordSignInAsync(
+            model.UserName,
+            model.Password,
+            model.RememberMe,
+            lockoutOnFailure: false
+        );
 
-        // If no user is found with that username, return an error
-        if (user == null)
+        if (result.Succeeded)
         {
-            Debug.WriteLine("No account found with the provided credentials.");
-            ModelState.AddModelError(string.Empty, "No account found with the provided credentials.");
-            return View(model);
-        }
-
-        // Check the password (assuming you're using plain text passwords)
-        // In reality, you should hash and compare passwords securely.
-        if (user.PasswordHash == model.Password) // Replace with proper hash checking for production
-        {
-            // User authenticated successfully
             return RedirectToAction("Index", "Home");
         }
-        else
-        {
-            Debug.WriteLine("Invalid login attempt.");
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-            return View(model);
-        }
-    }
 
+        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+        return View(model);
+    }
 
     public async Task<IActionResult> Logout()
     {
+        
         await _signInManager.SignOutAsync();
-        return RedirectToAction("SampleLogin", "Account");
+        return RedirectToAction("Landing", "Index");
     }
+
+
+    [HttpGet]
+    public IActionResult Register()
+    {
+        return View();
+    }
+    [HttpPost]
+    public async Task<IActionResult> Register(RegisterViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var user = new AspNetUsers
+        {
+            UserName = model.UserName,
+            Email = model.Email,
+            DisplayName = model.DisplayName, // Save the custom DisplayName
+            LockoutEnd = DateTimeOffset.UtcNow.AddMinutes(0)
+        };
+
+        var result = await _userManager.CreateAsync(user, model.Password);
+
+        if (result.Succeeded)
+        {
+            return RedirectToAction("SampleLogin", "Account");
+        }
+
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError("", error.Description);
+        }
+
+        return View(model);
+    }
+
+
 }

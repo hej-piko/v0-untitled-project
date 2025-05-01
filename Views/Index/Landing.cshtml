@@ -57,7 +57,7 @@
                         <a class="nav-link" href="#contact">Contact</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn btn-primary text-white px-3 ms-2" href="https://your-azure-app-service-url.azurewebsites.net">Launch App</a>
+                    <a class="nav-link btn btn-primary text-white px-3 ms-2" href="@Url.Action("SampleLogin", "Account")">Login</a>
                     </li>
                 </ul>
             </div>
@@ -68,7 +68,7 @@
         <div class="container">
             <h1 class="display-4 fw-bold mb-4">Esports Tournament Bracketing System</h1>
             <p class="lead mb-5">Create and manage your own esports tournaments with our easy-to-use bracketing system.</p>
-            <a href="https://your-azure-app-service-url.azurewebsites.net" class="btn btn-primary btn-lg px-5 py-3">Get Started</a>
+            <a href="@Url.Action("SampleLogin", "Account")" class="btn btn-primary btn-lg px-5 py-3">Get Started</a>
         </div>
     </section>
 

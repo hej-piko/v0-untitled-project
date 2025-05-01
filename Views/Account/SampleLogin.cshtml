@@ -62,8 +62,8 @@
     <div class="login-container">
         <h2>Login</h2>
         <form asp-action="SampleLogin" method="POST">
-            <input type="text" name="UserName" placeholder="Username" value="admin@example.com" required />
-            <input type="password" name="Password" placeholder="Password" value="123pass" required />
+            <input type="text" name="UserName" placeholder="Username" value="Renztgm" required />
+            <input type="password" name="Password" placeholder="Password" value="Renz12345!" required />
             <button type="submit">Login</button>
             @if (!ViewData.ModelState.IsValid)
             {
@@ -73,7 +73,16 @@
             }
             <div asp-validation-summary="All" class="text-danger"></div>
         </form>
+       <a href="@Url.Action("Register", "Account")" class="btn btn-primary">Register</a
     </div>
+
+    @* This will not work due to the MVC is not have the helper {_viewImports.cshtml} need to use @url.action()*@
+    @* <a asp-controller="Account" asp-action="Register">Register</a> *@
+
+>
+
+
+
 
 
 </body>

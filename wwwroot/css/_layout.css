@@ -1,0 +1,129 @@
+﻿/* Navbar Styles */
+/*.navbar {
+    background-color: #343a40;*/ /* Dark background */
+    /*box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+}*/
+
+/* Navbar Brand */
+/*.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color 0.3s ease;
+}
+
+    .navbar-brand:hover {
+        color: #f8f9fa;
+    }*/
+
+/* Navbar Links */
+/*.navbar-nav .nav-item .nav-link {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 10px 15px;
+    transition: color 0.3s ease, padding-left 0.3s ease;
+}
+
+    .navbar-nav .nav-item .nav-link:hover {
+        color: #ffc107;*/ /* Highlight on hover */
+        /*padding-left: 20px;
+    }
+
+    .navbar-nav .nav-item .nav-link.active {
+        color: #ffc107;*/ /* Active link color */
+        /*font-weight: 700;
+    }*/
+
+/* Navbar Toggler Button (for mobile view) */
+/*.navbar-toggler {
+    border-color: #ffffff;
+}
+
+.navbar-toggler-icon {
+    background-color: #ffffff;
+}*/
+
+/* On mobile, the navbar links are centered */
+/*.navbar-collapse {
+    text-align: center;
+}*/
+
+/* Mobile Navbar */
+/*@media (max-width: 768px) {
+    .navbar-collapse {
+        background-color: #343a40;
+        border-top: 1px solid #444;
+    }
+
+    .navbar-nav {
+        margin-top: 10px;
+    }
+
+    .nav-item {
+        margin-bottom: 10px;
+    }
+
+        .nav-item:last-child {
+            margin-bottom: 0;
+        }
+}*/
+
+/* Login/Logout Partial (If you have any login/logout buttons) */
+/*.partial-login {
+    color: #ffffff;
+    font-weight: 600;
+    padding: 10px 20px;
+    text-decoration: none;
+}
+
+    .partial-login:hover {
+        color: #ffc107;
+    }*/
+
+/* Navbar active link styling */
+/*.navbar-nav .nav-item.active .nav-link {
+    color: #ffc107;
+    font-weight: 700;
+}*/
+.nav {
+
+}
+.navbar {
+    background-color: #25252c;
+    display: flex;
+    justify-content: space-around;
+    
+}
+.container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.navbar-brand {
+    text-decoration: none;
+    color: white;
+}
+.navbar-toggler {
+    visibility: hidden;
+}
+.navbar-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: center;
+    list-style-type: none;
+}
+/*This is where the link is*/
+.nav-link {
+    text-decoration: none;
+    color: white;
+}
+
+.navbar-collapse {
+    display: flex;
+    justify-content: space-between;
+}

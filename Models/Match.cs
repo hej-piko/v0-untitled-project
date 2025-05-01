@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace EsportsTournament.Models
 {
@@ -6,7 +6,7 @@ namespace EsportsTournament.Models
     {
         public int Id { get; set; }
         
-        [Required]
+        
         public int TournamentId { get; set; }
         public virtual Tournament Tournament { get; set; }
         
@@ -24,5 +24,11 @@ namespace EsportsTournament.Models
         public int MatchNumber { get; set; }
         
         public bool IsCompleted { get; set; } = false;
+
+
+        // ✅ Helper properties to default nulls to 0
+        public int Participant1SafeId => Participant1Id ?? 0;
+        public int Participant2SafeId => Participant2Id ?? 0;
+        public int WinnerSafeId => WinnerId ?? 0;
     }
 }

@@ -1,14 +1,16 @@
 using EsportsTournament.Data;
 using EsportsTournament.Models;
 using Microsoft.EntityFrameworkCore;
+using EsportsTournament.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace EsportsTournament.Services
 {
-    public class BracketService
+    public class BracketService : IBracketService
     {
         private readonly ApplicationDbContext _context;
 
@@ -109,6 +111,16 @@ namespace EsportsTournament.Services
 
             await _context.Matches.AddRangeAsync(matches);
             await _context.SaveChangesAsync();
+
+            // Process auto-advances from first round
+            var completedFirstRoundMatches = matches
+                .Where(m => m.Round == 1 && m.IsCompleted && m.WinnerId.HasValue)
+                .ToList();
+
+            foreach (var completedMatch in completedFirstRoundMatches)
+            {
+                await UpdateNextMatchParticipant(completedMatch.Id, completedMatch.WinnerId.Value);
+            }
         }
 
         private int GetSeedForPosition(int position, int totalPositions)
@@ -134,49 +146,97 @@ namespace EsportsTournament.Services
                 throw new ArgumentException("Match not found");
 
             // Validate winner is a participant in this match
-            if (winnerId != match.Participant1Id && winnerId != match.Participant2Id)
+            if (match.Participant1Id != winnerId && match.Participant2Id != winnerId)
                 throw new ArgumentException("Invalid winner");
 
-            // Update match with winner
+            // Update current match
             match.WinnerId = winnerId;
             match.IsCompleted = true;
 
-            // Find the next match where this winner should advance
-            int nextRound = match.Round + 1;
-            int matchesPerRound = (int)Math.Pow(2, Math.Log(match.Tournament.MaxParticipants, 2) - match.Round + 1);
-            int nextMatchNumber = (match.MatchNumber - 1) / 2 + matchesPerRound + 1;
+            // Save the current match update
+            await _context.SaveChangesAsync();
+
+            // Handle advancing to next match
+            await UpdateNextMatchParticipant(matchId, winnerId);
+        }
+
+        private async Task UpdateNextMatchParticipant(int currentMatchId, int winnerId)
+        {
+            var currentMatch = await _context.Matches
+                .Include(m => m.Tournament)
+                .FirstOrDefaultAsync(m => m.Id == currentMatchId);
+
+            if (currentMatch == null)
+                return;
+
+            // Check if this is the final match
+            int totalRounds = (int)Math.Ceiling(Math.Log(currentMatch.Tournament?.MaxParticipants ?? 2, 2));
+            if (currentMatch.Round >= totalRounds)
+            {
+                // This is the final match, no next match to update
+                Debug.WriteLine($"Final match {currentMatchId} completed. Tournament winner: {winnerId}");
+                return;
+            }
+
+            // Calculate the next match number correctly
+            // For round 1, matches 1-2 go to round 2 match 1, matches 3-4 go to round 2 match 2, etc.
+            int nextMatchNumber = ((currentMatch.MatchNumber - 1) / 2) + 1;
+            int nextRound = currentMatch.Round + 1;
+
+            Debug.WriteLine($"Current match: {currentMatchId} (Round {currentMatch.Round}, Number {currentMatch.MatchNumber})");
+            Debug.WriteLine($"Next match should be: Round {nextRound}, Number {nextMatchNumber}");
 
             var nextMatch = await _context.Matches
-                .FirstOrDefaultAsync(m => m.TournamentId == match.TournamentId && 
-                                         m.Round == nextRound && 
-                                         m.MatchNumber == nextMatchNumber);
+                .FirstOrDefaultAsync(m =>
+                    m.TournamentId == currentMatch.TournamentId &&
+                    m.Round == nextRound &&
+                    m.MatchNumber == nextMatchNumber);
 
             if (nextMatch != null)
             {
-                // Determine which participant slot to fill
-                if (match.MatchNumber % 2 == 1)
+                Debug.WriteLine($"Found next match: {nextMatch.Id}");
+
+                // Set winner as participant in the next match
+                // If current match number is odd, winner goes to participant1 slot
+                // If current match number is even, winner goes to participant2 slot
+                if (currentMatch.MatchNumber % 2 != 0) // Odd match number
                 {
                     nextMatch.Participant1Id = winnerId;
+                    Debug.WriteLine($"Assigned winner {winnerId} to Participant1 slot");
                 }
-                else
+                else // Even match number
                 {
                     nextMatch.Participant2Id = winnerId;
+                    Debug.WriteLine($"Assigned winner {winnerId} to Participant2 slot");
                 }
 
-                // If both participants are set and one is null (bye), auto-advance
+                // Auto-complete next match if both participants are assigned
+                // but one is null (bye scenario)
                 if (nextMatch.Participant1Id.HasValue && !nextMatch.Participant2Id.HasValue)
                 {
                     nextMatch.WinnerId = nextMatch.Participant1Id;
                     nextMatch.IsCompleted = true;
+                    Debug.WriteLine($"Auto-advancing Participant1 {nextMatch.Participant1Id} due to bye");
                 }
                 else if (!nextMatch.Participant1Id.HasValue && nextMatch.Participant2Id.HasValue)
                 {
                     nextMatch.WinnerId = nextMatch.Participant2Id;
                     nextMatch.IsCompleted = true;
+                    Debug.WriteLine($"Auto-advancing Participant2 {nextMatch.Participant2Id} due to bye");
+                }
+
+                await _context.SaveChangesAsync();
+
+                // If we auto-advanced, also update the next match in the sequence
+                if (nextMatch.IsCompleted && nextMatch.WinnerId.HasValue)
+                {
+                    await UpdateNextMatchParticipant(nextMatch.Id, nextMatch.WinnerId.Value);
                 }
             }
-
-            await _context.SaveChangesAsync();
+            else
+            {
+                Debug.WriteLine($"ERROR: Next match not found for round {nextRound}, number {nextMatchNumber}");
+            }
         }
     }
 }
