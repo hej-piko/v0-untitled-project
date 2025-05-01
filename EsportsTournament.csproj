@@ -4,7 +4,6 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-EsportsTournament-12345678-1234-1234-1234-1234567890AB</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
