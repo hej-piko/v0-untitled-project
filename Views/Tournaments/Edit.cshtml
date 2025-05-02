@@ -7,23 +7,6 @@
 
 <h1>Edit Tournament</h1>
 
-@if (!ViewData.ModelState.IsValid)
-{
-    <div class="alert alert-danger">
-        <strong>Validation Errors:</strong>
-        <ul>
-            @foreach (var entry in ViewData.ModelState)
-            {
-                foreach (var error in entry.Value.Errors)
-                {
-                    <li>@entry.Key: @error.ErrorMessage</li>
-                }
-            }
-        </ul>
-    </div>
-}
-
-
 <hr />
 <div class="row">
     <div class="col-md-8">

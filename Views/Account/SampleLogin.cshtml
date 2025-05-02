@@ -125,8 +125,8 @@
         <hr class="solid">
         <h2>Login</h2>
         <form asp-action="SampleLogin" method="POST">
-            <input type="text" name="UserName" placeholder="Username" value="Renztgm" required />
-            <input type="password" name="Password" placeholder="Password" value="Renz12345!" required />
+            <input type="text" name="UserName" placeholder="Username" value="" required />
+            <input type="password" name="Password" placeholder="Password" value="" required />
             <button type="submit">Login</button>
             @if (!ViewData.ModelState.IsValid)
             {

@@ -10,194 +10,194 @@
     var isCreator = currentUser != null && Model.CreatorId == currentUser.Id;
     var isParticipant = currentUser != null && Model.Participants.Any(p => p.UserId == currentUser.Id);
     var canJoin = currentUser != null && Model.IsOpen && !isParticipant && Model.Participants.Count < Model.MaxParticipants;
+    Layout = "_Layout";
 }
 <style>
     :root {
-    --gaming-dark: #07171B;
-    --gaming-teal-dark: #184655;
-    --gaming-teal: #35707F;
-    --gaming-teal-light: #8AC0BA;
-    --gaming-beige: #E2D9B6;
-    --gaming-gold: #E1A100;
-    --gaming-amber: #CF8500;
-    --gaming-orange: #B35C00;
-    --gaming-red-orange: #992D0B;
-    --gaming-red-dark: #7C2321;
+        --gaming-dark: #07171B;
+        --gaming-teal-dark: #184655;
+        --gaming-teal: #35707F;
+        --gaming-teal-light: #8AC0BA;
+        --gaming-beige: #E2D9B6;
+        --gaming-gold: #E1A100;
+        --gaming-amber: #CF8500;
+        --gaming-orange: #B35C00;
+        --gaming-red-orange: #992D0B;
+        --gaming-red-dark: #7C2321;
     }
     body {
-    background: linear-gradient(135deg, var(--gaming-dark) 70%, var(--gaming-teal-dark) 100%);
-    color: var(--gaming-beige);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, var(--gaming-dark) 70%, var(--gaming-teal-dark) 100%);
+        color: var(--gaming-beige);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     .details-outer {
-    min-height: 80vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100vw;
-    box-sizing: border-box;
-    padding-top: 2.5rem;
-    padding-bottom: 10rem;
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100vw;
+        box-sizing: border-box;
+        padding-top: 2.5rem;
+        padding-bottom: 10rem;
     }
     .details-container {
-    max-width: 80%;
-    width: 100%;
-    margin: 0;
-    background: linear-gradient(135deg, var(--gaming-teal), var(--gaming-teal-light));
-    border-radius: 18px;
-    box-shadow: 0 8px 32px var(--gaming-gold), 0 0 0 4px var(--gaming-dark);
-    padding: 2.5rem 2rem 2rem 2rem;
-    color: var(--gaming-dark);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+        max-width: 800px;
+        width: 100%;
+        margin: 0 auto;
+        background: linear-gradient(135deg, var(--gaming-teal), var(--gaming-teal-light));
+        border-radius: 18px;
+        box-shadow: 0 8px 32px var(--gaming-gold), 0 0 0 4px var(--gaming-dark);
+        padding: 2.5rem 2rem 2rem 2rem;
+        color: var(--gaming-dark);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
     .details-title {
-    color: var(--gaming-gold);
-    font-size: 2rem;
-    font-weight: bold;
-    letter-spacing: 2px;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    word-break: break-word;
+        color: var(--gaming-gold);
+        font-size: 2rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        word-break: break-word;
     }
     .details-label {
-    color: var(--gaming-gold);
-    font-weight: 600;
-    margin-bottom: 0.3rem;
-    margin-right: 0.5rem;
-    align-self: flex-start;
+        color: var(--gaming-gold);
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        margin-right: 0.5rem;
+        align-self: flex-start;
     }
     .details-value {
-    color: var(--gaming-dark);
-    font-weight: 500;
-    margin-bottom: 1rem;
-    word-break: break-word;
-    align-self: flex-start;
+        color: var(--gaming-dark);
+        font-weight: 500;
+        margin-bottom: 1rem;
+        word-break: break-word;
+        align-self: flex-start;
     }
     .details-status {
-    font-weight: bold;
-    color: var(--gaming-orange);
-    margin-bottom: 1rem;
-    align-self: flex-start;
+        font-weight: bold;
+        color: var(--gaming-orange);
+        margin-bottom: 1rem;
+        align-self: flex-start;
     }
     .details-participants {
-    margin-bottom: 1.5rem;
-    color: var(--gaming-dark);
-    align-self: flex-start;
+        margin-bottom: 1.5rem;
+        color: var(--gaming-dark);
+        align-self: flex-start;
     }
     .btn-details-action {
-    text-decoration:none;
-    background: linear-gradient(90deg, var(--gaming-gold), var(--gaming-orange));
-    color: var(--gaming-dark) !important;
-    border: none;
-    border-radius: 10px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 2px 8px var(--gaming-orange);
-    transition: background 0.2s, box-shadow 0.2s;
-    padding: 0.85rem 2.5rem;
-    margin: 1.2rem auto 0 auto;
-    display: block;
+        background: linear-gradient(90deg, var(--gaming-gold), var(--gaming-orange));
+        color: var(--gaming-dark) !important;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 2px 8px var(--gaming-orange);
+        transition: background 0.2s, box-shadow 0.2s;
+        padding: 0.85rem 2.5rem;
+        margin: 1.2rem auto 0 auto;
+        display: block;
     }
     .btn-details-action:hover {
-    background: linear-gradient(90deg, var(--gaming-amber), var(--gaming-gold));
-    box-shadow: 0 4px 16px var(--gaming-gold);
-    color: var(--gaming-dark) !important;
+        background: linear-gradient(90deg, var(--gaming-amber), var(--gaming-gold));
+        box-shadow: 0 4px 16px var(--gaming-gold);
+        color: var(--gaming-dark) !important;
     }
     .alert-success, .alert-danger {
-    max-width: 480px;
-    margin: 0 auto 1.5rem auto;
-    border-radius: 8px;
-    font-weight: 500;
+        max-width: 480px;
+        margin: 0 auto 1.5rem auto;
+        border-radius: 8px;
+        font-weight: 500;
     }
     .details-card {
-    width: 100%;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    margin-top: 2rem;
-    margin-bottom: 0;
+        width: 100%;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        margin-top: 2rem;
+        margin-bottom: 0;
     }
     .details-card .card-header {
-    background: linear-gradient(90deg, var(--gaming-teal-dark), var(--gaming-teal));
-    color: var(--gaming-gold);
-    border-radius: 12px 12px 0 0;
-    font-weight: bold;
-    font-size: 1.1rem;
-    letter-spacing: 1px;
-    padding: 1rem 1.5rem;
-    border-bottom: none;
+        background: linear-gradient(90deg, var(--gaming-teal-dark), var(--gaming-teal));
+        color: var(--gaming-gold);
+        border-radius: 12px 12px 0 0;
+        font-weight: bold;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+        padding: 1rem 1.5rem;
+        border-bottom: none;
     }
     .details-card .card-body {
-    background: transparent;
-    color: var(--gaming-dark);
-    border-radius: 0 0 12px 12px;
-    padding: 1.5rem 1.2rem;
+        background: transparent;
+        color: var(--gaming-dark);
+        border-radius: 0 0 12px 12px;
+        padding: 1.5rem 1.2rem;
     }
     .list-group-item {
-    background: var(--gaming-teal-light);
-    color: var(--gaming-dark);
-    border: none;
-    border-radius: 8px;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
+        background: var(--gaming-teal-light);
+        color: var(--gaming-dark);
+        border: none;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
     }
     .badge-primary {
-    background: var(--gaming-gold);
-    color: var(--gaming-dark);
-    font-weight: bold;
+        background: var(--gaming-gold);
+        color: var(--gaming-dark);
+        font-weight: bold;
     }
     .details-card-participants {
-    width: 100%;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    margin-top: 2rem;
-    margin-bottom: 0;
-    max-height: 320px;
-    overflow-y: auto;
+        width: 100%;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        margin-top: 2rem;
+        margin-bottom: 0;
+        max-height: 320px;
+        overflow-y: auto;
     }
     .details-card-participants .card-header {
-    background: linear-gradient(90deg, var(--gaming-teal-dark), var(--gaming-teal));
-    color: var(--gaming-gold);
-    border-radius: 12px 12px 0 0;
-    font-weight: bold;
-    font-size: 1.1rem;
-    letter-spacing: 1px;
-    padding: 1rem 1.5rem;
-    border-bottom: none;
+        background: linear-gradient(90deg, var(--gaming-teal-dark), var(--gaming-teal));
+        color: var(--gaming-gold);
+        border-radius: 12px 12px 0 0;
+        font-weight: bold;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+        padding: 1rem 1.5rem;
+        border-bottom: none;
     }
     .details-card-participants .card-body {
-    background: transparent;
-    color: var(--gaming-dark);
-    border-radius: 0 0 12px 12px;
-    padding: 1.5rem 1.2rem;
+        background: transparent;
+        color: var(--gaming-dark);
+        border-radius: 0 0 12px 12px;
+        padding: 1.5rem 1.2rem;
     }
     .btn-back-list {
-    background: linear-gradient(90deg, var(--gaming-gold), var(--gaming-orange));
-    color: var(--gaming-dark) !important;
-    border: none;
-    border-radius: 10px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 2px 8px var(--gaming-orange);
-    transition: background 0.2s, box-shadow 0.2s;
-    padding: 0.7rem 2.2rem;
-    margin: 0 auto 1rem auto;
-    display: block;
-    text-align: center;
-    text-decoration: none;
-    width: fit-content;
+        background: linear-gradient(90deg, var(--gaming-gold), var(--gaming-orange));
+        color: var(--gaming-dark) !important;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 2px 8px var(--gaming-orange);
+        transition: background 0.2s, box-shadow 0.2s;
+        padding: 0.7rem 2.2rem;
+        margin: 0 auto 1rem auto;
+        display: block;
+        text-align: center;
+        text-decoration: none;
+        width: fit-content;
     }
     .btn-back-list:hover {
-    background: linear-gradient(90deg, var(--gaming-amber), var(--gaming-gold));
-    box-shadow: 0 4px 16px var(--gaming-gold);
-    color: var(--gaming-dark) !important;
-    text-decoration: none;
+        background: linear-gradient(90deg, var(--gaming-amber), var(--gaming-gold));
+        box-shadow: 0 4px 16px var(--gaming-gold);
+        color: var(--gaming-dark) !important;
+        text-decoration: none;
     }
 </style>
 <div class="details-outer">
@@ -240,22 +240,15 @@
         {
             <div class="alert alert-info">You are registered for this tournament.</div>
         }
-        @if (isCreator)
+        @if (isCreator && Model.IsOpen)
         {
-
-            @if (Model.IsOpen)
-            {
-                <div class="mt-3">
-                    @* <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-block">Edit Tournament</a> *@
-                    <form asp-action="StartTournament" asp-route-id="@Model.Id" method="post" class="mt-2">
-                        <button type="submit" class="btn-details-action">Start Tournament</button>
-                    </form>
-                </div>
-            }
-            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-details-action">Edit Tournament</a>
-            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn-details-action">Delete Tournament</a>
+            <div class="mt-3">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-block">Edit Tournament</a>
+                <form asp-action="StartTournament" asp-route-id="@Model.Id" method="post" class="mt-2">
+                    <button type="submit" class="btn btn-danger btn-block">Start Tournament</button>
+                </form>
+            </div>
         }
-
         <div class="card details-card-participants">
             <div class="card-header bg-info text-white">
                 <h5 class="mb-0">Participants</h5>
