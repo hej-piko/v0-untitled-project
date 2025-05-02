@@ -1,0 +1,144 @@
+@* 
+
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860 
+*@
+
+@{
+}
+<head>
+<style>
+    :root {
+        --gaming-dark: #07171B;
+        --gaming-teal-dark: #184655;
+        --gaming-teal: #35707F;
+        --gaming-teal-light: #8AC0BA;
+        --gaming-beige: #E2D9B6;
+        --gaming-gold: #E1A100;
+        --gaming-amber: #CF8500;
+        --gaming-orange: #B35C00;
+        --gaming-red-orange: #992D0B;
+        --gaming-red-dark: #7C2321;
+    }
+    body {
+        background: linear-gradient(135deg, var(--gaming-dark) 70%, var(--gaming-teal-dark) 100%);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        color: var(--gaming-beige);
+    }
+    .login-container {
+        background: linear-gradient(135deg, var(--gaming-teal), var(--gaming-teal-light));
+        padding: 2.5rem 2rem 2rem 2rem;
+        border-radius: 18px;
+        box-shadow: 0 8px 32px var(--gaming-gold), 0 0 0 4px var(--gaming-dark);
+        width: 100%;
+        max-width: 400px;
+        color: var(--gaming-dark);
+        position: relative;
+    }
+    .login-container h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: var(--gaming-gold);
+        text-shadow: 0 2px 8px var(--gaming-orange);
+        font-size: 2rem;
+        font-weight: bold;
+    }
+    .login-container input[type="text"],
+    .login-container input[type="password"] {
+        width: 100%;
+        padding: 0.85rem;
+        margin: 0.5rem 0 1.2rem;
+        border: 1.5px solid var(--gaming-gold);
+        border-radius: 10px;
+        font-size: 1.1rem;
+        background: var(--gaming-teal-dark);
+        color: var(--gaming-beige);
+        box-shadow: 0 2px 8px var(--gaming-dark);
+        outline: none;
+        transition: border 0.2s, box-shadow 0.2s;
+    }
+    .login-container input[type="text"]:focus,
+    .login-container input[type="password"]:focus {
+        border: 1.5px solid var(--gaming-orange);
+        box-shadow: 0 4px 16px var(--gaming-gold);
+    }
+    .login-container button,
+    .login-container .btn-primary {
+        width: 100%;
+        padding: 0.85rem;
+        background: linear-gradient(90deg, var(--gaming-gold), var(--gaming-orange));
+        color: var(--gaming-dark) !important;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px var(--gaming-orange);
+        transition: background 0.2s, box-shadow 0.2s;
+        text-shadow: 0 1px 8px var(--gaming-amber);
+    }
+    .login-container button:hover,
+    .login-container .btn-primary:hover {
+        background: linear-gradient(90deg, var(--gaming-amber), var(--gaming-gold));
+        box-shadow: 0 4px 16px var(--gaming-gold);
+        color: var(--gaming-dark) !important;
+    }
+    .login-container .text-danger {
+        color: var(--gaming-red-orange) !important;
+        background: rgba(124, 35, 33, 0.15);
+        border-radius: 6px;
+        padding: 0.5rem 1rem;
+        margin-top: 0.5rem;
+        font-weight: bold;
+        box-shadow: 0 2px 8px var(--gaming-red-dark);
+    }
+    .login-container a.btn-primary {
+        display: block;
+        margin-top: 0.5rem;
+        padding-right: 0.1rem;
+        padding-left: 0.1rem;
+        text-align: center;
+        text-decoration: none;
+    }
+    .glow {
+        text-shadow: 0 0 8px var(--gaming-gold), 0 0 16px var(--gaming-orange);
+    }
+    .brand-title {
+        text-align: center;
+        font-size: 2.2rem;
+        font-weight: bold;
+        color: var(--gaming-gold);
+        margin-bottom: 1.5rem;
+        letter-spacing: 2px;
+        text-shadow: 0 0 16px var(--gaming-orange), 0 2px 8px var(--gaming-gold);
+    }
+</style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="brand-title glow">ES LEAGUE</div>
+        <hr class="solid">
+        <h2>Login</h2>
+        <form asp-action="SampleLogin" method="POST">
+            <input type="text" name="UserName" placeholder="Username" value="" required />
+            <input type="password" name="Password" placeholder="Password" value="" required />
+            <button type="submit">Login</button>
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="text-danger">
+                    <strong>Error:</strong> Error has occourred!
+                </div>
+            }
+        </form>
+        <a href="@Url.Action("Register", "Account")" class="btn btn-primary mt-2">Register</a>
+    </div>
+
+    @* This will not work due to the MVC is not have the helper {_viewImports.cshtml} need to use @url.action()*@
+    @* <a asp-controller="Account" asp-action="Register">Register</a> *@
+
+</body>

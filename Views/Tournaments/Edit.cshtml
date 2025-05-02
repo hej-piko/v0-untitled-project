@@ -1,4 +1,5 @@
 @model EsportsTournament.Models.Tournament
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     ViewData["Title"] = "Edit Tournament";
@@ -14,7 +15,7 @@
                 <h5 class="mb-0">Edit Tournament Details</h5>
             </div>
             <div class="card-body">
-                <form asp-action="Edit">
+                <form asp-action="Edit" asp-controller="Tournaments" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" asp-for="Id" />
                     <div class="form-group">

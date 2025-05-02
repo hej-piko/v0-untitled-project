@@ -4,15 +4,119 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Esports Tournament</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/_layout.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        :root {
+            --gaming-dark: #07171B;
+            --gaming-teal-dark: #184655;
+            --gaming-teal: #35707F;
+            --gaming-teal-light: #8AC0BA;
+            --gaming-beige: #E2D9B6;
+            --gaming-gold: #E1A100;
+            --gaming-amber: #CF8500;
+            --gaming-orange: #B35C00;
+            --gaming-red-orange: #992D0B;
+            --gaming-red-dark: #7C2321;
+        }
+        .navbar {
+            background: linear-gradient(90deg, var(--gaming-dark), var(--gaming-teal-dark));
+            box-shadow: 0 2px 12px var(--gaming-gold);
+            border-bottom: 3px solid var(--gaming-gold);
+            min-height: 64px;
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+        }
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1300px;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--gaming-gold) !important;
+            letter-spacing: 2px;
+            font-size: 2rem;
+            text-shadow: none;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            height: 48px;
+            padding: 0 1rem 0 0.25rem;
+        }
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+        }
+        .navbar-nav .nav-link {
+            color: var(--gaming-beige) !important;
+            font-weight: 600;
+            margin-right: 1.2rem;
+            letter-spacing: 1px;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            height: 48px;
+            padding: 0 0.7rem;
+        }
+        .navbar-nav .nav-link:last-child {
+            margin-right: 0;
+        }
+        .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
+            color: var(--gaming-gold) !important;
+            text-shadow: none;
+        }
+        .navbar-toggler {
+            border: 2px solid var(--gaming-gold);
+            margin-left: 1rem;
+            align-self: center;
+        }
+        .navbar-toggler-icon {
+            background-image: linear-gradient(90deg, var(--gaming-gold), var(--gaming-orange));
+        }
+        .navbar-collapse {
+            display: flex !important;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        .navbar-dark .navbar-nav .nav-link {
+            color: var(--gaming-beige);
+        }
+        .navbar-dark .navbar-nav .nav-link:focus, .navbar-dark .navbar-nav .nav-link:hover {
+            color: var(--gaming-gold);
+        }
+        .navbar-dark .navbar-toggler {
+            border-color: var(--gaming-gold);
+        }
+        .navbar-dark .navbar-toggler-icon {
+            background-image: linear-gradient(90deg, var(--gaming-gold), var(--gaming-orange));
+        }
+        footer {
+            width: 100%;
+            background: linear-gradient(90deg, var(--gaming-dark), var(--gaming-teal-dark));
+            color: var(--gaming-gold);
+            border-top: 3px solid var(--gaming-gold);
+            padding: 0.25rem 0 0.2rem 0;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.05rem;
+            letter-spacing: 1px;
+            position: static;
+        }
+        .footer .container {
+            max-width: 1100px;
+        }
+    </style>
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Esports Tournament</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ES LEAGUE</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -45,11 +149,11 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2023 - Esports Tournament Bracket System
+            &copy; 2025 | ES LEAGUE
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @* <script src="~/lib/jquery/dist/jquery.min.js"></script> *@
+    @* <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

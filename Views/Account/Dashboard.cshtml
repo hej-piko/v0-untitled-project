@@ -1,0 +1,235 @@
+@model EsportsTournament.Models.DashboardViewModel
+@using EsportsTournament.Models
+
+@{ ViewData["Title"] = "My Dashboard";
+    Layout = "_Layout"; }
+
+<style>
+    /* Copied styles from Home/Index.cshtml for dashboard layout */
+    :root {
+        --gaming-dark: #07171B;
+        --gaming-teal-dark: #184655;
+        --gaming-teal: #35707F;
+        --gaming-teal-light: #8AC0BA;
+        --gaming-beige: #E2D9B6;
+        --gaming-gold: #E1A100;
+        --gaming-orange: #B35C00;
+        --gaming-red-orange: #992D0B;
+    }
+    body { /* Added body style for background */
+        background: linear-gradient(135deg, var(--gaming-dark) 70%, var(--gaming-teal-dark) 100%);
+        color: var(--gaming-beige); /* Ensure text color contrasts */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Added font */
+    }
+    .dashboard-container { /* Similar to home-container but maybe less padding */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        box-sizing: border-box;
+        padding-top: 1rem;
+    }
+    .tournament-row {
+        display: flex;
+        flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        gap: 2rem;
+        justify-content: space-around; /* Space out containers */
+        width: 100%;
+        margin-bottom: 2rem;
+        align-items: stretch;
+    }
+    .tournament-container {
+        background: linear-gradient(135deg, var(--gaming-teal), var(--gaming-teal-light));
+        border-radius: 18px;
+        box-shadow: 0 8px 10px var(--gaming-gold), 0 0 0 4px var(--gaming-dark);
+        color: var(--gaming-dark);
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 45%; /* Allow flexible sizing, aiming for ~45% width */
+        min-width: 300px; /* Prevent containers from becoming too small */
+        min-height: 400px; /* Ensure a minimum height */
+        padding: 0;
+        margin-bottom: 1rem; /* Add space when they wrap */
+    }
+    .tournament-header {
+        background: linear-gradient(90deg, var(--gaming-gold), var(--gaming-orange));
+        color: var(--gaming-dark) !important;
+        border-radius: 18px 18px 0 0;
+        font-weight: bold;
+        font-size: 1.2rem;
+        letter-spacing: 1px;
+        padding: 1rem 1.5rem;
+        border-bottom: none;
+        text-align: center;
+    }
+    .container-body {
+        flex: 1 1 auto;
+        overflow-y: auto;
+        min-height: 0;
+        max-height: 60vh; /* Adjust max height as needed */
+        padding: 1.5rem;
+        background: transparent;
+    }
+    .list-group {
+        max-height: 55vh; /* Adjust max height */
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--gaming-gold) var(--gaming-teal-dark);
+        padding-left: 0; /* Remove default list padding */
+        list-style: none; /* Remove default list bullets */
+    }
+    .list-group::-webkit-scrollbar {
+        width: 8px;
+    }
+    .list-group::-webkit-scrollbar-thumb {
+        background: var(--gaming-gold);
+        border-radius: 8px;
+    }
+    .list-group::-webkit-scrollbar-track {
+        background: var(--gaming-teal-dark);
+        border-radius: 8px;
+    }
+    .list-group-item {
+        background: var(--gaming-teal-dark);
+        color: var(--gaming-beige);
+        border: 1.5px solid var(--gaming-gold);
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px var(--gaming-dark);
+        transition: border 0.2s, box-shadow 0.2s, background 0.2s;
+        display: block;
+        text-decoration: none;
+        padding: 1rem 1.2rem;
+    }
+    .list-group-item:hover {
+        border: 1.5px solid var(--gaming-orange);
+        background: var(--gaming-teal);
+        color: var(--gaming-gold);
+        box-shadow: 0 4px 16px var(--gaming-gold);
+        cursor: pointer;
+    }
+    .container-content h5 {
+        color: var(--gaming-gold);
+        font-weight: bold;
+        margin-bottom: 0.2rem;
+    }
+    .container-content p,
+    .container-content small {
+        color: var(--gaming-beige);
+        margin-bottom: 0.4rem; /* Add spacing between details */
+        font-size: 0.9rem; /* Slightly smaller text */
+    }
+    .no-tournaments {
+        text-align: center;
+        color: var(--gaming-red-orange);
+        font-weight: bold;
+        margin: 2rem 0;
+    }
+    .tournament-status {
+        float: right;
+        font-size: 0.85rem;
+        padding: 0.2em 0.6em;
+        border-radius: 0.25rem;
+        font-weight: bold;
+    }
+    .status-open {
+        background-color: #28a745; /* Green */
+        color: white;
+    }
+    .status-closed {
+        background-color: #dc3545; /* Red */
+        color: white;
+    }
+</style>
+
+<div class="dashboard-container">
+    <h1>@ViewData["Title"]</h1>
+
+    <div class="tournament-row">
+        
+        <!-- Hosted Tournaments Container -->
+        <div class="tournament-container">
+            <div class="tournament-header">Hosted Tournaments</div>
+            <div class="container-body">
+                @if (Model?.HostedTournaments != null && Model.HostedTournaments.Any()) {
+                    <div class="list-group">
+                        @foreach (var tournament in Model.HostedTournaments)
+                        {
+                            <a asp-controller="Tournaments" asp-action="Details" asp-route-id="@tournament.Id" class="list-group-item">
+                                <div class="container-content">
+                                    <h5 class="mb-1">
+                                        @(tournament.Name ?? "Unnamed Tournament")
+                                        <span class="tournament-status @(tournament.IsOpen ? "status-open" : "status-closed")">
+                                            @(tournament.IsOpen ? "Open" : "Closed")
+                                        </span>
+                                    </h5>
+                                    <p><strong>Game:</strong> @(tournament.Game ?? "N/A")</p>
+                                    <p><strong>Start Date:</strong> @tournament.StartDate.ToString("MMM dd, yyyy HH:mm")</p>
+                                    <p><strong>Participants:</strong> @(tournament.Participants?.Count ?? 0) / @tournament.MaxParticipants</p>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="no-tournaments">You haven't hosted any tournaments yet.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Joined Tournaments Container -->
+        <div class="tournament-container">
+            <div class="tournament-header">Joined Tournaments</div>
+            <div class="container-body">
+                 @* Remove checks for Model and Model.JoinedTournaments being null - controller fixed *@ 
+                 @{ 
+                     if (Model?.JoinedTournaments != null && Model.JoinedTournaments.Any()) 
+                     {
+                         <div class="list-group">
+                             @foreach (var tournament in Model.JoinedTournaments)
+                             {
+                                 @if(tournament != null) // Keep check for null tournament object just in case
+                                 {
+                                     <a asp-controller="Tournaments" asp-action="Details" asp-route-id="@tournament.Id" class="list-group-item">
+                                         <div class="container-content">
+                                             <h5 class="mb-1">
+                                                 @(tournament.Name ?? "Unnamed Tournament")
+                                                 <span class="tournament-status @(tournament.IsOpen ? "status-open" : "status-closed")">
+                                                     @(tournament.IsOpen ? "Open" : "Closed")
+                                                 </span>
+                                             </h5>
+                                             <p><strong>Game:</strong> @(tournament.Game ?? "N/A")</p>
+                                             <p><strong>Start Date:</strong> @tournament.StartDate.ToString("MMM dd, yyyy HH:mm")</p>
+                                              @{ 
+                                                  // Use explicit check variable from debugging phase
+                                                  var participantCount = tournament.Participants != null ? tournament.Participants.Count : 0;
+                                              }
+                                             <p><strong>Participants:</strong> @participantCount / @tournament.MaxParticipants</p>
+                                             @{ 
+                                                 // Use explicit check variable from debugging phase
+                                                 var creatorName = tournament.Creator != null ? tournament.Creator.UserName : "N/A";
+                                             }
+                                             <p><strong>Created By:</strong> @creatorName</p>
+                                         </div>
+                                     </a>
+                                 }
+                                 else
+                                 {
+                                     <div class="list-group-item" style="border-color: magenta;">
+                                          <p style="color: magenta;"> Encountered an invalid (null) tournament entry.</p>
+                                     </div>
+                                 }
+                             }
+                         </div>
+                     }
+                     else
+                     {
+                          <p class="no-tournaments">You haven't joined any tournaments yet.</p>
+                     }
+                 }
+            </div>
+        </div>
+
+    </div>
+</div>
