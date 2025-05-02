@@ -8,6 +8,8 @@ using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using EsportsTournament.Services;
 using EsportsTournament.Interfaces;
+using Microsoft.Data.SqlClient;
+using System.Security.Claims;
 
 public class TournamentsController : Controller
 {
@@ -104,17 +106,17 @@ public class TournamentsController : Controller
 
         return RedirectToAction("Details", new { id = tournament.Id });
     }
-    
+
 
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> Details(int id)
     {
         var tournament = await _context.Tournaments
-            .Include(t => t.Creator) // Load Creator
+            .Include(t => t.Creator)
             .Include(t => t.Participants)
-                .ThenInclude(p => p.User) // Load User inside Participant
-            .Include(t => t.Matches) // Load Matches
+                .ThenInclude(p => p.User)
+            .Include(t => t.Matches)
             .FirstOrDefaultAsync(t => t.Id == id);
 
         if (tournament == null)
@@ -122,8 +124,16 @@ public class TournamentsController : Controller
             return NotFound();
         }
 
+        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var creatorId = tournament.Creator?.Id; // Assuming Creator has an Id
+
+        ViewBag.IsCreator = creatorId == currentUserId;
+        Debug.WriteLine("Current user: " + currentUserId);
+        Debug.WriteLine("Creator: " + tournament.CreatorId);
         return View(tournament);
     }
+
+
 
 
     // GET: Tournaments/Edit/5
@@ -461,5 +471,120 @@ public class TournamentsController : Controller
     {
         return _context.Tournaments.Any(e => e.Id == id);
     }
+
+    // GET: Tournaments/Delete/5
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> Delete(int? id)
+    {
+        if (id == null)
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            // Use AsNoTracking to avoid any potential tracking conflicts
+            var tournament = await _context.Tournaments
+                .AsNoTracking()
+                .Include(t => t.Creator)
+                .Include(t => t.Participants)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+
+            // Only creator can delete
+            var currentUserId = _userManager.GetUserId(User);
+            if (tournament.CreatorId != currentUserId)
+            {
+                return Forbid();
+            }
+
+            // Ensure we have a valid model to pass to the view
+            if (tournament.Participants == null)
+            {
+                tournament.Participants = new List<Participant>();
+            }
+
+            return View(tournament);
+        }
+        catch (Exception ex)
+        {
+            // Log the exception
+            System.Diagnostics.Debug.WriteLine($"Error in Delete GET: {ex.Message}");
+            TempData["Error"] = "An error occurred while loading the tournament.";
+            return RedirectToAction("Index", "Home");
+        }
+    }
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    [Authorize]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        using var transaction = await _context.Database.BeginTransactionAsync();
+
+        try
+        {
+            Debug.WriteLine($"Attempting to delete tournament with ID: {id}");
+
+            // First fetch the tournament without tracking
+            var tournament = await _context.Tournaments
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (tournament == null)
+            {
+                Debug.WriteLine($"Tournament with ID {id} not found");
+                TempData["Error"] = "Tournament not found.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Check authorization
+            var currentUserId = _userManager.GetUserId(User);
+            if (tournament.CreatorId != currentUserId)
+            {
+                Debug.WriteLine($"User {currentUserId} not authorized to delete tournament {id}");
+                TempData["Error"] = "You are not authorized to delete this tournament.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Use raw SQL for deletion to avoid EF Core tracking issues
+            // First delete matches
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM Matches WHERE TournamentId = {0}", id);
+
+            // Then delete participants
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM Participants WHERE TournamentId = {0}", id);
+
+            // Finally delete the tournament itself
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM Tournaments WHERE Id = {0}", id);
+
+            // Commit the transaction
+            await transaction.CommitAsync();
+
+            TempData["Success"] = "Tournament has been deleted successfully!";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception ex)
+        {
+            // Roll back the transaction
+            await transaction.RollbackAsync();
+
+            // Log the exception
+            Debug.WriteLine($"Error deleting tournament: {ex.Message}");
+            Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+            if (ex.InnerException != null)
+            {
+                Debug.WriteLine($"Inner exception: {ex.InnerException.Message}");
+            }
+
+            TempData["Error"] = "An error occurred while deleting the tournament.";
+            return RedirectToAction(nameof(Index));
+        }
+    }
+
+
 
 }

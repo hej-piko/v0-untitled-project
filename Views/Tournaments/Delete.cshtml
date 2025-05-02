@@ -1,0 +1,135 @@
+﻿@model EsportsTournament.Models.Tournament
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Delete Tournament";
+}
+
+
+<style>
+    :root {
+        --gaming-dark: #07171B;
+        --gaming-teal-dark: #184655;
+        --gaming-teal: #35707F;
+        --gaming-teal-light: #8AC0BA;
+        --gaming-beige: #E2D9B6;
+        --gaming-gold: #E1A100;
+        --gaming-amber: #CF8500;
+        --gaming-orange: #B35C00;
+        --gaming-red-orange: #992D0B;
+        --gaming-red-dark: #7C2321;
+    }
+
+    .delete-container {
+        max-width: 600px;
+        margin: 3rem auto;
+        background: linear-gradient(135deg, var(--gaming-teal), var(--gaming-teal-light));
+        border-radius: 18px;
+        box-shadow: 0 8px 32px var(--gaming-gold), 0 0 0 4px var(--gaming-dark);
+        padding: 2.5rem 2rem;
+        color: var(--gaming-dark);
+    }
+
+    .delete-title {
+        color: var(--gaming-red-dark);
+        font-size: 1.8rem;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .delete-warning {
+        color: var(--gaming-red-dark);
+        font-weight: bold;
+        font-size: 1.2rem;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .delete-details {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .delete-label {
+        font-weight: bold;
+        color: var(--gaming-dark);
+        margin-bottom: 0.3rem;
+    }
+
+    .delete-value {
+        margin-bottom: 1rem;
+    }
+
+    .btn-delete {
+        background: linear-gradient(90deg, var(--gaming-red-orange), var(--gaming-red-dark));
+        color: white !important;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        transition: background 0.2s, box-shadow 0.2s;
+        padding: 0.85rem 2.5rem;
+        width: 100%;
+        display: block;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+        .btn-delete:hover {
+            background: linear-gradient(90deg, var(--gaming-red-dark), var(--gaming-red-orange));
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+            color: white !important;
+        }
+
+    .btn-cancel {
+        background: linear-gradient(90deg, var(--gaming-gold), var(--gaming-orange));
+        color: var(--gaming-dark) !important;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        transition: background 0.2s, box-shadow 0.2s;
+        padding: 0.85rem 2.5rem;
+        width: 87.5%;
+        display: block;
+        text-align: center;
+        text-decoration: none;
+    }
+
+        .btn-cancel:hover {
+            background: linear-gradient(90deg, var(--gaming-amber), var(--gaming-gold));
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+            color: var(--gaming-dark) !important;
+            text-decoration: none;
+        }
+</style>
+
+<div class="delete-container">
+    <h2 class="delete-title">Delete Tournament</h2>
+    <p class="delete-warning">Are you sure you want to delete this tournament? This action cannot be undone.</p>
+
+    <div class="delete-details">
+        <div class="delete-label">Name:</div>
+        <div class="delete-value">@Model.Name</div>
+
+        <div class="delete-label">Game:</div>
+        <div class="delete-value">@Model.Game</div>
+
+        <div class="delete-label">Start Date:</div>
+        <div class="delete-value">@Model.StartDate.ToString("MMM dd, yyyy HH:mm")</div>
+    </div>
+
+    <form method="post" action="@Url.Action("Delete", "Tournaments", new { id = Model.Id })">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn-delete">Delete Tournament</button>
+    </form>
+
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn-cancel">Cancel</a>
+</div>

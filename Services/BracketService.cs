@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Data.SqlTypes;
 using System.Data;
+using Microsoft.Data.SqlClient;
 
 namespace EsportsTournament.Services
 {
@@ -105,12 +106,10 @@ namespace EsportsTournament.Services
                     {
                         TournamentId = tournamentId,
                         Round = round,
-                        MatchNumber = i + 1   // ✅ MatchNumber resets for each round
+                        MatchNumber = i + 1   // MatchNumber resets for each round
                     });
                 }
             }
-
-
 
             await _context.Matches.AddRangeAsync(matches);
             await _context.SaveChangesAsync();
@@ -152,8 +151,6 @@ namespace EsportsTournament.Services
             if (match.Participant1Id != winnerId && match.Participant2Id != winnerId)
                 throw new ArgumentException("Invalid winner");
 
-
-
             // Update current match
             match.WinnerId = winnerId;
             match.IsCompleted = true;
@@ -167,152 +164,212 @@ namespace EsportsTournament.Services
 
         private async Task UpdateNextMatchParticipant(int currentMatchId, int winnerId)
         {
-            Match currentMatch = null;
-            Tournament currentTournament = null;
-
-            using var connection = _context.Database.GetDbConnection();
-            if (connection.State != ConnectionState.Open)
-                await connection.OpenAsync();
-
-            // Step 1: Get current match and tournament info
-            using (var cmd = connection.CreateCommand())
+            try
             {
-                cmd.CommandText = @"
-            SELECT m.Id, m.Round, m.MatchNumber, m.TournamentId, t.MaxParticipants
-            FROM Matches m
-            INNER JOIN Tournaments t ON m.TournamentId = t.Id
-            WHERE m.Id = @matchId";
-
-                var p = cmd.CreateParameter();
-                p.ParameterName = "@matchId";
-                p.Value = currentMatchId;
-                cmd.Parameters.Add(p);
-
-                using var reader = await cmd.ExecuteReaderAsync();
-                if (await reader.ReadAsync())
+                // Get the connection string from the context
+                string connectionString = _context.Database.GetConnectionString();
+                if (string.IsNullOrEmpty(connectionString))
                 {
-                    currentMatch = new Match
-                    {
-                        Id = reader.GetInt32(0),
-                        Round = reader.GetInt32(1),
-                        MatchNumber = reader.GetInt32(2),
-                        TournamentId = reader.GetInt32(3)
-                    };
-                    currentTournament = new Tournament
-                    {
-                        MaxParticipants = reader.GetInt32(4)
-                    };
-                }
-            }
-
-            if (currentMatch == null) return;
-
-            // Step 2: Calculate next match position
-            int totalRounds = (int)Math.Ceiling(Math.Log(currentTournament.MaxParticipants, 2));
-            if (currentMatch.Round >= totalRounds) return;
-
-            int nextRound = currentMatch.Round + 1;
-            int nextMatchNumber = ((currentMatch.MatchNumber - 1) / 2) + 1;
-
-            int? nextMatchId = null;
-            int? nextP1Id = null;
-            int? nextP2Id = null;
-
-            using (var cmd = connection.CreateCommand())
-            {
-                cmd.CommandText = @"
-            SELECT Id, Participant1Id, Participant2Id, IsCompleted
-            FROM Matches
-            WHERE TournamentId = @tournamentId AND Round = @round AND MatchNumber = @matchNumber";
-
-                var p1 = cmd.CreateParameter(); p1.ParameterName = "@tournamentId"; p1.Value = currentMatch.TournamentId; cmd.Parameters.Add(p1);
-                var p2 = cmd.CreateParameter(); p2.ParameterName = "@round"; p2.Value = nextRound; cmd.Parameters.Add(p2);
-                var p3 = cmd.CreateParameter(); p3.ParameterName = "@matchNumber"; p3.Value = nextMatchNumber; cmd.Parameters.Add(p3);
-
-                using var reader = await cmd.ExecuteReaderAsync();
-                if (await reader.ReadAsync())
-                {
-                    nextMatchId = reader.GetInt32(0);
-                    if (!reader.IsDBNull(1)) nextP1Id = reader.GetInt32(1);
-                    if (!reader.IsDBNull(2)) nextP2Id = reader.GetInt32(2);
-                }
-            }
-
-            if (nextMatchId == null) return;
-
-            // Step 3: Add winner to the correct slot
-            using (var cmd = connection.CreateCommand())
-            {
-                cmd.CommandText = @"
-            UPDATE Matches
-            SET 
-                Participant1Id = CASE WHEN @isOdd = 1 THEN @winnerId ELSE Participant1Id END,
-                Participant2Id = CASE WHEN @isOdd = 0 THEN @winnerId ELSE Participant2Id END
-            WHERE Id = @matchId";
-
-                var p1 = cmd.CreateParameter(); p1.ParameterName = "@isOdd"; p1.Value = (currentMatch.MatchNumber % 2 != 0) ? 1 : 0; cmd.Parameters.Add(p1);
-                var p2 = cmd.CreateParameter(); p2.ParameterName = "@winnerId"; p2.Value = winnerId; cmd.Parameters.Add(p2);
-                var p3 = cmd.CreateParameter(); p3.ParameterName = "@matchId"; p3.Value = nextMatchId.Value; cmd.Parameters.Add(p3);
-
-                await cmd.ExecuteNonQueryAsync();
-            }
-
-            // Step 4: Re-check participants for next match after update
-            using (var cmd = connection.CreateCommand())
-            {
-                cmd.CommandText = "SELECT Participant1Id, Participant2Id FROM Matches WHERE Id = @id";
-                var p = cmd.CreateParameter(); p.ParameterName = "@id"; p.Value = nextMatchId.Value; cmd.Parameters.Add(p);
-
-                using var reader = await cmd.ExecuteReaderAsync();
-                if (await reader.ReadAsync())
-                {
-                    nextP1Id = !reader.IsDBNull(0) ? reader.GetInt32(0) : null;
-                    nextP2Id = !reader.IsDBNull(1) ? reader.GetInt32(1) : null;
-                }
-            }
-
-            // Step 5: Auto-complete if both participants are the same
-            if (nextP1Id.HasValue && nextP2Id.HasValue && nextP1Id == nextP2Id)
-            {
-                using (var cmd = connection.CreateCommand())
-                {
-                    cmd.CommandText = @"
-                UPDATE Matches
-                SET WinnerId = @winnerId, IsCompleted = 1
-                WHERE Id = @matchId";
-
-                    var p1 = cmd.CreateParameter(); p1.ParameterName = "@winnerId"; p1.Value = nextP1Id.Value; cmd.Parameters.Add(p1);
-                    var p2 = cmd.CreateParameter(); p2.ParameterName = "@matchId"; p2.Value = nextMatchId.Value; cmd.Parameters.Add(p2);
-
-                    await cmd.ExecuteNonQueryAsync();
+                    throw new InvalidOperationException("Database connection string is not configured properly");
                 }
 
-                // Recursive call
-                await UpdateNextMatchParticipant(nextMatchId.Value, nextP1Id.Value);
-            }
+                // Initialize variables
+                int? currentMatchRound = null;
+                int? currentMatchNumber = null;
+                int? tournamentId = null;
+                int? maxParticipants = null;
 
-            // Optional: handle one-bye advancement for later rounds only
-            if ((nextP1Id != null && nextP2Id == null) || (nextP1Id == null && nextP2Id != null))
-            {
-                if (currentMatch.Round > 2)
+                // Create and open a new connection
+                using (var connection = new SqlConnection(connectionString))
                 {
-                    int autoWinnerId = nextP1Id ?? nextP2Id ?? winnerId;
+                    await connection.OpenAsync();
 
+                    // Step 1: Get current match details
                     using (var cmd = connection.CreateCommand())
                     {
                         cmd.CommandText = @"
-                    UPDATE Matches
-                    SET WinnerId = @winnerId, IsCompleted = 1
-                    WHERE Id = @matchId";
+                            SELECT m.Round, m.MatchNumber, m.TournamentId, t.MaxParticipants
+                            FROM Matches m
+                            INNER JOIN Tournaments t ON m.TournamentId = t.Id
+                            WHERE m.Id = @matchId";
 
-                        var p1 = cmd.CreateParameter(); p1.ParameterName = "@winnerId"; p1.Value = autoWinnerId; cmd.Parameters.Add(p1);
-                        var p2 = cmd.CreateParameter(); p2.ParameterName = "@matchId"; p2.Value = nextMatchId.Value; cmd.Parameters.Add(p2);
+                        cmd.Parameters.Add(new SqlParameter("@matchId", currentMatchId));
+
+                        using var reader = await cmd.ExecuteReaderAsync();
+                        if (await reader.ReadAsync())
+                        {
+                            currentMatchRound = reader.GetInt32(0);
+                            currentMatchNumber = reader.GetInt32(1);
+                            tournamentId = reader.GetInt32(2);
+                            maxParticipants = reader.GetInt32(3);
+                        }
+                    }
+
+                    // Verify we have the data we need
+                    if (!currentMatchRound.HasValue || !currentMatchNumber.HasValue ||
+                        !tournamentId.HasValue || !maxParticipants.HasValue)
+                        return;
+
+                    // Calculate total rounds in tournament
+                    int totalRounds = (int)Math.Ceiling(Math.Log(maxParticipants.Value, 2));
+
+                    // Stop if this is the final round
+                    if (currentMatchRound.Value >= totalRounds)
+                        return;
+
+                    // Calculate next round and match
+                    int nextRound = currentMatchRound.Value + 1;
+                    // This is the correct calculation for determining the next match
+                    int nextMatchNumber = (int)Math.Ceiling(currentMatchNumber.Value / 2.0);
+
+                    // Get the next match ID
+                    int? nextMatchId = null;
+                    using (var cmd = connection.CreateCommand())
+                    {
+                        cmd.CommandText = @"
+                            SELECT Id
+                            FROM Matches
+                            WHERE TournamentId = @tournamentId 
+                            AND Round = @round 
+                            AND MatchNumber = @matchNumber";
+
+                        cmd.Parameters.Add(new SqlParameter("@tournamentId", tournamentId.Value));
+                        cmd.Parameters.Add(new SqlParameter("@round", nextRound));
+                        cmd.Parameters.Add(new SqlParameter("@matchNumber", nextMatchNumber));
+
+                        object result = await cmd.ExecuteScalarAsync();
+                        if (result != null && result != DBNull.Value)
+                        {
+                            nextMatchId = Convert.ToInt32(result);
+                        }
+                    }
+
+                    if (!nextMatchId.HasValue)
+                        return;
+
+                    // Determine which participant slot to update based on the current match number
+                    // Odd match winners go to Participant1 slot, even match winners go to Participant2 slot
+                    bool isOdd = currentMatchNumber.Value % 2 != 0;
+
+                    // Log for debugging
+                    Debug.WriteLine($"Current Match: {currentMatchId}, Number: {currentMatchNumber}, Round: {currentMatchRound}");
+                    Debug.WriteLine($"Next Match: {nextMatchId}, Round: {nextRound}, Position: {(isOdd ? "Participant1" : "Participant2")}");
+
+                    // Update the appropriate participant slot in the next match
+                    using (var cmd = connection.CreateCommand())
+                    {
+                        if (isOdd)
+                        {
+                            cmd.CommandText = @"
+                                UPDATE Matches
+                                SET Participant1Id = @winnerId
+                                WHERE Id = @matchId";
+                        }
+                        else
+                        {
+                            cmd.CommandText = @"
+                                UPDATE Matches
+                                SET Participant2Id = @winnerId
+                                WHERE Id = @matchId";
+                        }
+
+                        cmd.Parameters.Add(new SqlParameter("@winnerId", winnerId));
+                        cmd.Parameters.Add(new SqlParameter("@matchId", nextMatchId.Value));
 
                         await cmd.ExecuteNonQueryAsync();
                     }
 
-                    await UpdateNextMatchParticipant(nextMatchId.Value, autoWinnerId);
+                    // Now check if we need to auto-advance (if both participants are filled)
+                    int? p1Id = null;
+                    int? p2Id = null;
+
+                    using (var cmd = connection.CreateCommand())
+                    {
+                        cmd.CommandText = @"
+                            SELECT Participant1Id, Participant2Id
+                            FROM Matches
+                            WHERE Id = @matchId";
+
+                        cmd.Parameters.Add(new SqlParameter("@matchId", nextMatchId.Value));
+
+                        using var reader = await cmd.ExecuteReaderAsync();
+                        if (await reader.ReadAsync())
+                        {
+                            p1Id = !reader.IsDBNull(0) ? reader.GetInt32(0) : null;
+                            p2Id = !reader.IsDBNull(1) ? reader.GetInt32(1) : null;
+                        }
+                    }
+
+                    // Auto-advance scenarios
+                    if (p1Id.HasValue && p2Id.HasValue && p1Id.Value == p2Id.Value)
+                    {
+                        // Extremely rare case: both participants are the same
+                        using (var cmd = connection.CreateCommand())
+                        {
+                            cmd.CommandText = @"
+                                UPDATE Matches
+                                SET WinnerId = @winnerId, IsCompleted = 1
+                                WHERE Id = @matchId";
+
+                            cmd.Parameters.Add(new SqlParameter("@winnerId", p1Id.Value));
+                            cmd.Parameters.Add(new SqlParameter("@matchId", nextMatchId.Value));
+
+                            await cmd.ExecuteNonQueryAsync();
+                        }
+
+                        // Recursive call to keep advancing
+                        await UpdateNextMatchParticipant(nextMatchId.Value, p1Id.Value);
+                    }
+                    else if (currentMatchRound > 1)
+                    {
+                        // For rounds after the first, handle byes by auto-advancing
+                        if (p1Id.HasValue && !p2Id.HasValue)
+                        {
+                            // Auto-advance participant 1
+                            using (var cmd = connection.CreateCommand())
+                            {
+                                cmd.CommandText = @"
+                                    UPDATE Matches
+                                    SET WinnerId = @winnerId, IsCompleted = 1
+                                    WHERE Id = @matchId";
+
+                                cmd.Parameters.Add(new SqlParameter("@winnerId", p1Id.Value));
+                                cmd.Parameters.Add(new SqlParameter("@matchId", nextMatchId.Value));
+
+                                await cmd.ExecuteNonQueryAsync();
+                            }
+
+                            await UpdateNextMatchParticipant(nextMatchId.Value, p1Id.Value);
+                        }
+                        else if (!p1Id.HasValue && p2Id.HasValue)
+                        {
+                            // Auto-advance participant 2
+                            using (var cmd = connection.CreateCommand())
+                            {
+                                cmd.CommandText = @"
+                                    UPDATE Matches
+                                    SET WinnerId = @winnerId, IsCompleted = 1
+                                    WHERE Id = @matchId";
+
+                                cmd.Parameters.Add(new SqlParameter("@winnerId", p2Id.Value));
+                                cmd.Parameters.Add(new SqlParameter("@matchId", nextMatchId.Value));
+
+                                await cmd.ExecuteNonQueryAsync();
+                            }
+
+                            await UpdateNextMatchParticipant(nextMatchId.Value, p2Id.Value);
+                        }
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                Debug.WriteLine($"Error in UpdateNextMatchParticipant: {ex.Message}");
+                Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+
+                // Re-throw to notify calling code
+                throw;
             }
         }
     }
