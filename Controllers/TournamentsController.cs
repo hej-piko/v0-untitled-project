@@ -103,9 +103,9 @@ public class TournamentsController : Controller
 
         return RedirectToAction("Details", new { id = tournament.Id });
     }
+    
 
     [HttpGet]
-    [Authorize]
     [Authorize]
     public async Task<IActionResult> Details(int id)
     {
@@ -123,6 +123,7 @@ public class TournamentsController : Controller
 
         return View(tournament);
     }
+
 
     // GET: Tournaments/Edit/5
     [Authorize]
@@ -147,7 +148,8 @@ public class TournamentsController : Controller
 
         return View(tournament);
     }
-    // POST: Tournaments/Edit/
+
+    // POST: Tournaments/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize]

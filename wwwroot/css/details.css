@@ -1,0 +1,160 @@
+﻿/* General Styles */
+.tournament-bracket {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Bracket container styles */
+.bracket-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* Round styles */
+.round {
+    width: 100%;
+    max-width: 250px;
+    text-align: center;
+}
+
+.round-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #4CAF50; /* Green for title */
+}
+
+/* Match styles */
+.match {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+    .match.completed {
+        background-color: #e0ffe0; /* Light green when match is completed */
+        border-color: #4CAF50;
+    }
+
+.match-upper, .match-lower {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 5px 0;
+    width: 100%;
+    text-align: center;
+}
+
+.match-upper {
+    border-bottom: 1px solid #ddd;
+}
+
+.match-lower {
+    border-top: 1px solid #ddd;
+}
+
+    /* Styling for winners */
+    .match-upper.winner, .match-lower.winner {
+        color: #4CAF50; /* Green for winners */
+        font-weight: bold;
+    }
+
+/* Action buttons */
+.match-actions {
+    margin-top: 10px;
+}
+
+    .match-actions .btn-group {
+        display: flex;
+        gap: 10px;
+    }
+
+    .match-actions .btn {
+        padding: 5px 15px;
+        border-radius: 4px;
+        font-size: 14px;
+        background-color: #2196F3;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+        .match-actions .btn:hover {
+            background-color: #1976D2;
+        }
+
+/* Match connector lines */
+.match::before, .match::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -20px;
+    width: 20px;
+    height: 2px;
+    background-color: #ddd;
+}
+
+.match::after {
+    left: auto;
+    right: -20px;
+}
+
+/* Match Flow Line */
+.round .match::before {
+    display: none;
+}
+
+.round:last-child .match::after {
+    display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .bracket-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .round {
+        max-width: 100%;
+        margin-bottom: 30px;
+    }
+}
+
+/* Additional styling for the card and header */
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px;
+    border-radius: 8px 8px 0 0;
+    font-size: 20px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Tournament Status */
+.text-center {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}

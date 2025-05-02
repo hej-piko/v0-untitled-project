@@ -7,11 +7,11 @@ namespace EsportsTournament.Models
     {
         public int Id { get; set; }
         
-        [Required]
+        //[Required]
         public int TournamentId { get; set; }
         public virtual Tournament Tournament { get; set; }
         
-        [Required]
+        //[Required]
         public string UserId { get; set; }
         public virtual AspNetUsers User { get; set; } // This should be the username of the user who is participating
                                              //public virtual ApplicationUser User { get; set; }

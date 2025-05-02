@@ -6,9 +6,17 @@ namespace EsportsTournament.Models
     {
         public int Id { get; set; }
         
-        
         public int TournamentId { get; set; }
         public virtual Tournament Tournament { get; set; }
+        //public DateTime? MatchDate { get; set; }
+
+        //public string? TeamA { get; set; }
+
+        //public string? TeamB { get; set; }
+
+        //public int? ScoreA { get; set; }
+        //public int? ScoreB { get; set; }
+
         
         public int? Participant1Id { get; set; }
         public virtual Participant Participant1 { get; set; }

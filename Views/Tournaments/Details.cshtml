@@ -1,4 +1,4 @@
-@model EsportsTournament.Models.Tournament
+﻿@model EsportsTournament.Models.Tournament
 @using Microsoft.AspNetCore.Identity
 @using EsportsTournament.Models
 @inject UserManager<AspNetUsers> UserManager
@@ -180,12 +180,12 @@
             </div>
         </div>
     </div>
+    <div class="mt-3">
+        <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to List</a>
+    </div>
 </div>
 
-<div class="mt-3">
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</div>
-
+<link rel="stylesheet" href="~/css/details.css" />
 @section Styles {
     <style>
         .tournament-bracket {
