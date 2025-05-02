@@ -1,4 +1,4 @@
-﻿using EsportsTournament.Data;
+using EsportsTournament.Data;
 using EsportsTournament.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNet.Identity.Owin;
@@ -52,6 +53,38 @@ public class AccountController : Controller
 
         ModelState.AddModelError(string.Empty, "Invalid login attempt.");
         return View(model);
+    }
+
+    [Authorize] // Ensure only logged-in users can access
+    public async Task<IActionResult> Dashboard()
+    {
+        var userId = _userManager.GetUserId(User);
+        if (userId == null)
+        {
+            // Should not happen if [Authorize] is working, but good practice
+            return Challenge(); 
+        }
+
+        var hostedTournaments = await _context.Tournaments
+            .Include(t => t.Participants) // Eager load Participants
+            .Where(t => t.CreatorId == userId)
+            .OrderByDescending(t => t.StartDate)
+            .ToListAsync();
+
+        var joinedTournaments = await _context.Tournaments
+                                     .Include(t => t.Participants) 
+                                     .Include(t => t.Creator)      
+                                     .Where(t => t.Participants != null && t.Participants.Any(p => p.UserId == userId)) 
+                                     .OrderByDescending(t => t.StartDate)
+                                     .ToListAsync(); 
+
+        var viewModel = new DashboardViewModel
+        {
+            HostedTournaments = hostedTournaments,
+            JoinedTournaments = joinedTournaments 
+        };
+
+        return View(viewModel);
     }
 
     public async Task<IActionResult> Logout()
