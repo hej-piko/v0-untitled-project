@@ -1,78 +1,173 @@
-@model EsportsTournament.Models.Tournament
-
+@model EsportsTournament.Models.CreateTournamentViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Create Tournament";
+    Layout = "_Layout"; 
 }
-
-<h1>Create Tournament</h1>
-
-<hr />
-<div class="row">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Tournament Details</h5>
+<style>
+    :root {
+        --gaming-dark: #07171B;
+        --gaming-teal-dark: #184655;
+        --gaming-teal: #35707F;
+        --gaming-teal-light: #8AC0BA;
+        --gaming-beige: #E2D9B6;
+        --gaming-gold: #E1A100;
+        --gaming-amber: #CF8500;
+        --gaming-orange: #B35C00;
+        --gaming-red-orange: #992D0B;
+        --gaming-red-dark: #7C2321;
+    }
+    body {
+        background: linear-gradient(135deg, var(--gaming-dark) 70%, var(--gaming-teal-dark) 100%);
+        color: var(--gaming-beige);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .create-outer {
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100vw;
+        box-sizing: border-box;
+        padding-top: 2.5rem;
+    }
+    .create-container {
+        max-width: 480px;
+        width: 100%;
+        margin: 0 auto;
+        background: linear-gradient(135deg, var(--gaming-teal), var(--gaming-teal-light));
+        border-radius: 18px;
+        box-shadow: 0 8px 32px var(--gaming-gold), 0 0 0 4px var(--gaming-dark);
+        padding: 2.5rem 2rem 2rem 2rem;
+        color: var(--gaming-dark);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .create-title {
+        color: var(--gaming-gold);
+        font-size: 2rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .form-group {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    .form-group label {
+        align-self: flex-start;
+        color: var(--gaming-gold);
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        margin-left: 0.5rem;
+    }
+    .form-control, textarea.form-control {
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+        background: var(--gaming-teal-dark);
+        color: var(--gaming-beige);
+        border: 1.5px solid var(--gaming-gold);
+        border-radius: 10px;
+        padding: 0.7rem 1rem;
+        font-size: 1rem;
+        box-shadow: 0 2px 8px var(--gaming-dark);
+        transition: border 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    .form-control:focus, textarea.form-control:focus {
+        border: 1.5px solid var(--gaming-orange);
+        background: var(--gaming-teal);
+        color: var(--gaming-gold);
+        outline: none;
+        box-shadow: 0 4px 16px var(--gaming-gold);
+    }
+    .form-check-input {
+        margin-left: 0.5rem;
+        background: var(--gaming-teal-dark);
+        border: 1.5px solid var(--gaming-gold);
+        accent-color: var(--gaming-orange);
+    }
+    .btn-create {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        background: linear-gradient(90deg, var(--gaming-gold), var(--gaming-orange));
+        color: var(--gaming-dark) !important;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 2px 8px var(--gaming-orange);
+        transition: background 0.2s, box-shadow 0.2s;
+        padding: 0.85rem 2.5rem;
+    }
+    .btn-create:hover {
+        background: linear-gradient(90deg, var(--gaming-amber), var(--gaming-gold));
+        box-shadow: 0 4px 16px var(--gaming-gold);
+        color: var(--gaming-dark) !important;
+    }
+    .cancel-link {
+        text-align: center;
+        color: var(--gaming-orange);
+        font-weight: 600;
+        margin-top: 1.5rem;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .cancel-link:hover {
+        color: var(--gaming-gold);
+        text-decoration: underline;
+    }
+</style>
+<div class="create-outer">
+    <div class="create-container">
+        <div class="create-title">Create Tournament</div>
+        <form asp-controller="Tournaments" asp-action="Create" method="post" style="width:100%">
+            <div class="form-group">
+                <label for="Name" class="control-label">Name</label>
+                <input name="Name" class="form-control" />
+                <span class="text-danger"></span>
             </div>
-            <div class="card-body">
-                <form asp-action="Create">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="form-group">
-                        <label asp-for="Name" class="control-label"></label>
-                        <input asp-for="Name" class="form-control" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Game" class="control-label"></label>
-                        <input asp-for="Game" class="form-control" />
-                        <span asp-validation-for="Game" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Description" class="control-label"></label>
-                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-                        <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="StartDate" class="control-label"></label>
-                        <input asp-for="StartDate" class="form-control" type="datetime-local" />
-                        <span asp-validation-for="StartDate" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="MaxParticipants" class="control-label"></label>
-                        <select asp-for="MaxParticipants" class="form-control">
-                            <option value="4">4 participants</option>
-                            <option value="8">8 participants</option>
-                            <option value="16">16 participants</option>
-                            <option value="32">32 participants</option>
-                            <option value="64">64 participants</option>
-                        </select>
-                        <span asp-validation-for="MaxParticipants" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <input type="submit" value="Create" class="btn btn-primary" />
-                        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-                    </div>
-                </form>
+            <div class="form-group">
+                <label for="Description" class="control-label">Description</label>
+                <textarea name="Description" class="form-control"></textarea>
+                <span class="text-danger"></span>
             </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0">Tournament Guidelines</h5>
+            <div class="form-group">
+                <label for="Game" class="control-label">Game</label>
+                <input name="Game" class="form-control" />
+                <span class="text-danger"></span>
             </div>
-            <div class="card-body">
-                <ul>
-                    <li>Tournaments use a single elimination bracket format.</li>
-                    <li>Seeding is based on first-come, first-serve registration.</li>
-                    <li>You can start the tournament manually or wait until it's full.</li>
-                    <li>Once started, the bracket cannot be modified.</li>
-                    <li>Only the tournament creator can update match results.</li>
-                </ul>
+            <div class="form-group">
+                <label for="StartDate" class="control-label">Start Date</label>
+                <input name="StartDate" class="form-control" type="datetime-local" />
+                <span class="text-danger"></span>
             </div>
-        </div>
+            <div class="form-group">
+                <label for="MaxParticipants" class="control-label">Max Participants</label>
+                <input name="MaxParticipants" class="form-control" />
+                <span class="text-danger"></span>
+            </div>
+            <div class="form-group-check" style="display:flex; align-items:center; color: black; margin-bottom: 1rem;">
+                <input name="IsOpen" type="checkbox" class="form-check-input" id="IsOpenCheck" />
+                <label for="IsOpenCheck" class="control-label mb-0">Open</label>
+                <span class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn-create">Create Tournament</button>
+        </form>
+        <a href="@Url.Action("Index", "Home")" class="cancel-link">Cancel</a>
     </div>
 </div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
