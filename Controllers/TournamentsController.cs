@@ -53,7 +53,8 @@ public class TournamentsController : Controller
         var game = form["Game"];
         var startDateStr = form["StartDate"];
         var maxParticipantsStr = form["MaxParticipants"];
-        var isOpen = form["IsOpen"] == "on";
+        var isOpen = true;
+        //var isOpen = form["IsOpen"] == "on";
 
         if (!DateTime.TryParse(startDateStr, out var startDate))
         {
@@ -153,54 +154,30 @@ public class TournamentsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Game,Description,StartDate,MaxParticipants,IsOpen")] Tournament tournament)
+    public async Task<IActionResult> Edit(int id, TournamentEditViewModel model)
     {
-        if (id != tournament.Id)
-        {
-            return NotFound();
-        }
+        if (!ModelState.IsValid)
+            return View(model);
 
-        var existingTournament = await _context.Tournaments.FindAsync(id);
-        if (existingTournament == null)
-        {
+        var tournament = await _context.Tournaments.FindAsync(id);
+        if (tournament == null)
             return NotFound();
-        }
 
-        // Only creator can edit
-        if (existingTournament.CreatorId != _userManager.GetUserId(User))
-        {
+        if (tournament.CreatorId != _userManager.GetUserId(User))
             return Forbid();
-        }
 
-        if (ModelState.IsValid)
-        {
-            try
-            {
-                existingTournament.Name = tournament.Name;
-                existingTournament.Game = tournament.Game;
-                existingTournament.Description = tournament.Description;
-                existingTournament.StartDate = tournament.StartDate;
-                existingTournament.MaxParticipants = tournament.MaxParticipants;
-                existingTournament.IsOpen = tournament.IsOpen;
+        // Update only editable fields
+        tournament.Name = model.Name;
+        tournament.Game = model.Game;
+        tournament.Description = model.Description;
+        tournament.StartDate = model.StartDate;
+        tournament.MaxParticipants = model.MaxParticipants;
+        tournament.IsOpen = model.IsOpen;
 
-                _context.Update(existingTournament);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TournamentExists(tournament.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return RedirectToAction(nameof(Details), new { id = tournament.Id });
-        }
-        return View(tournament);
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Details), new { id = tournament.Id });
     }
+
 
     // POST: Tournaments/Join/5
     [HttpPost]
