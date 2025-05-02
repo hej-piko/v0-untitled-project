@@ -2,23 +2,148 @@
     ViewData["Title"] = "Home Page";
     Layout = "_Layout";
 }
-@* @using Microsoft.AspNetCore.Identity *@
+<style>
+    :root {
+        --gaming-dark: #07171B;
+        --gaming-teal-dark: #184655;
+        --gaming-teal: #35707F;
+        --gaming-teal-light: #8AC0BA;
+        --gaming-beige: #E2D9B6;
+        --gaming-gold: #E1A100;
+        --gaming-amber: #CF8500;
+        --gaming-orange: #B35C00;
+        --gaming-red-orange: #992D0B;
+        --gaming-red-dark: #7C2321;
+    }
+    body {
+        background: linear-gradient(135deg, var(--gaming-dark) 70%, var(--gaming-teal-dark) 100%);
+        color: var(--gaming-beige);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .home-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 80vh;
+        width: 100%;
+        box-sizing: border-box;
+        padding-top: 2.5rem;
+    }
+    .tournament-row {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 2rem;
+        justify-content: flex-start;
+        width: 100%;
+        margin-bottom: 2rem;
+        align-items: stretch;
+        min-height: 500px;
+    }
+    .tournament-container {
+        background: linear-gradient(135deg, var(--gaming-teal), var(--gaming-teal-light));
+        border-radius: 18px;
+        box-shadow: 0 8px 10px var(--gaming-gold), 0 0 0 4px var(--gaming-dark);
+        color: var(--gaming-dark);
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        min-height: 0;
+        padding: 0;
+    }
+    .tournament-container:first-child {
+        flex: 1 1 45%;
+        max-width: 45vw;
+        margin-right: 2rem;
+    }
+    .tournament-container:last-child {
+        flex: 1 1 55%;
+        max-width: 55vw;
+    }
+    .tournament-header {
+        background: linear-gradient(90deg, var(--gaming-gold), var(--gaming-orange));
+        color: var(--gaming-dark) !important;
+        border-radius: 18px 18px 0 0;
+        font-weight: bold;
+        font-size: 1.2rem;
+        letter-spacing: 1px;
+        padding: 1rem 1.5rem;
+        border-bottom: none;
+    }
+    .container-body {
+        flex: 1 1 auto;
+        overflow-y: auto;
+        min-height: 0;
+        max-height: 70vh;
+        padding: 1.5rem;
+        background: transparent;
+    }
+    .list-group {
+        max-height: 65vh;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--gaming-gold) var(--gaming-teal-dark);
+    }
+    .list-group::-webkit-scrollbar {
+        width: 8px;
+    }
+    .list-group::-webkit-scrollbar-thumb {
+        background: var(--gaming-gold);
+        border-radius: 8px;
+    }
+    .list-group::-webkit-scrollbar-track {
+        background: var(--gaming-teal-dark);
+        border-radius: 8px;
+    }
+    .list-group-item {
+        background: var(--gaming-teal-dark);
+        color: var(--gaming-beige);
+        border: 1.5px solid var(--gaming-gold);
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px var(--gaming-dark);
+        transition: border 0.2s, box-shadow 0.2s, background 0.2s;
+        display: block;
+        text-decoration: none;
+        padding: 1rem 1.2rem;
+    }
+    .list-group-item:hover {
+        border: 1.5px solid var(--gaming-orange);
+        background: var(--gaming-teal);
+        color: var(--gaming-gold);
+        box-shadow: 0 4px 16px var(--gaming-gold);
+    }
+    .container-content h5 {
+        color: var(--gaming-gold);
+        font-weight: bold;
+        margin-bottom: 0.2rem;
+    }
+    .container-content p,
+    .container-content small {
+        color: var(--gaming-beige);
+    }
+    .no-tournaments {
+        text-align: center;
+        color: var(--gaming-red-orange);
+        font-weight: bold;
+        margin: 2rem 0;
+    }
 
-<link rel="stylesheet" href="~/css/index.css" />
-<div class="row mt-4">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Upcoming Tournasments</h5>
-            </div>
-            <div class="card-body">
+</style>
+<div class="home-container">
+    <div class="tournament-row">
+        <div class="tournament-container">
+            <div class="tournament-header">Upcoming Tournaments</div>
+            <div class="container-body">
                 @if (ViewBag.UpcomingTournaments != null && ViewBag.UpcomingTournaments.Count > 0)
                 {
                     <div class="list-group">
                         @foreach (var tournament in ViewBag.UpcomingTournaments)
                         {
                             <a href="@Url.Action("Details", "Tournaments", new { id = tournament.Id })" class="list-group-item">
-                                <div class="card-content">
+                                <div class="container-content">
                                     <h5 class="mb-1">@tournament.Name</h5>
                                     <small>@tournament.StartDate.ToString("MMM dd, yyyy")</small>
                                     <p class="mb-1">@tournament.Game</p>
@@ -30,38 +155,33 @@
                 }
                 else
                 {
-                    <p class="text-center">No upcoming tournaments.</p>
+                    <p class="no-tournaments">No upcoming tournaments.</p>
                 }
             </div>
         </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0">Active Tournaments</h5>
-            </div>
-            <div class="card-body">
+        <div class="tournament-container">
+            <div class="tournament-header">Active Tournaments</div>
+            <div class="container-body">
                 @if (ViewBag.ActiveTournaments != null && ViewBag.ActiveTournaments.Count > 0)
                 {
                     <div class="list-group">
                         @foreach (var tournament in ViewBag.ActiveTournaments)
                         {
                             <a href="@Url.Action("Details", "Tournaments", new { id = tournament.Id })" class="list-group-item list-group-item-action">
-                                <div class="d-flex w-100 justify-content-between">
+                                <div class="container-content">
                                     <h5 class="mb-1">@tournament.Name</h5>
                                     <small>Started: @tournament.StartDate.ToString("MMM dd, yyyy")</small>
+                                    <p class="mb-1">@tournament.Game</p>
                                 </div>
-                                <p class="mb-1">@tournament.Game</p>
                             </a>
                         }
                     </div>
                 }
                 else
                 {
-                    <p class="text-center">No active tournaments.</p>
+                    <p class="no-tournaments">No active tournaments.</p>
                 }
             </div>
         </div>
     </div>
 </div>
-<a class="btn btn-primary" href="@Url.Action("Create", "Tournaments")" >Create Tournament</a>

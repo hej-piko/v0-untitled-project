@@ -1,45 +1,180 @@
-﻿@*
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
 }
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-<form method="post">
-    @if (!ViewData.ModelState.IsValid)
-    {
-        <div class="alert alert-danger">
-            <ul>
-                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    <li>@error.ErrorMessage</li>
-                }
-            </ul>
-        </div>
-    }
-    <div class="form-group">
-        <label for="UserName">Username</label>
-        <input type="text" class="form-control" id="UserName" name="UserName" value="Renztgm" required />
+<head>
+    <style>
+        :root {
+            --gaming-dark: #07171B;
+            --gaming-teal-dark: #184655;
+            --gaming-teal: #35707F;
+            --gaming-teal-light: #8AC0BA;
+            --gaming-beige: #E2D9B6;
+            --gaming-gold: #E1A100;
+            --gaming-amber: #CF8500;
+            --gaming-orange: #B35C00;
+            --gaming-red-orange: #992D0B;
+            --gaming-red-dark: #7C2321;
+        }
+        body {
+            background: linear-gradient(135deg, var(--gaming-dark) 70%, var(--gaming-teal-dark) 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: var(--gaming-beige);
+        }
+        .brand-title {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--gaming-gold);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 16px var(--gaming-orange), 0 2px 8px var(--gaming-gold);
+        }
+        .register-container {
+            background: linear-gradient(135deg, var(--gaming-teal), var(--gaming-teal-light));
+            padding: 2.5rem 2rem 2rem 2rem;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px var(--gaming-gold), 0 0 0 4px var(--gaming-dark);
+            width: 100%;
+            max-width: 430px;
+            color: var(--gaming-dark);
+            margin: 0 auto;
+        }
+        .register-container h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--gaming-gold);
+            text-shadow: 0 2px 8px var(--gaming-orange);
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .register-container form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.2rem;
+            width: 100%;
+            max-width: 380px;
+        }
+        .form-group label {
+            flex: 0 0 140px;
+            text-align: right;
+            margin-right: 1rem;
+            color: var(--gaming-gold);
+            font-weight: 600;
+            text-shadow: 0 2px 8px var(--gaming-orange);
+            margin-bottom: 0;
+        }
+        .form-group input {
+            flex: 1 1 220px;
+            min-width: 0;
+        }
+        .form-control {
+            background: var(--gaming-teal-dark);
+            color: var(--gaming-beige);
+            border: 1.5px solid var(--gaming-gold);
+            border-radius: 10px;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 8px var(--gaming-dark);
+            padding: 0.85rem;
+            outline: none;
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+        .form-control:focus {
+            border: 1.5px solid var(--gaming-orange);
+            box-shadow: 0 4px 16px var(--gaming-gold);
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 0.85rem;
+            background: linear-gradient(90deg, var(--gaming-gold), var(--gaming-orange));
+            color: var(--gaming-dark) !important;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            box-shadow: 0 2px 8px var(--gaming-orange);
+            transition: background 0.2s, box-shadow 0.2s;
+            text-shadow: 0 1px 8px var(--gaming-amber);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, var(--gaming-amber), var(--gaming-gold));
+            box-shadow: 0 4px 16px var(--gaming-gold);
+            color: var(--gaming-dark) !important;
+        }
+        .alert-danger {
+            color: var(--gaming-red-orange) !important;
+            background: rgba(124, 35, 33, 0.15);
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            box-shadow: 0 2px 8px var(--gaming-red-dark);
+        }
+        .back-link {
+            text-decoration: none;
+            color: var(--gaming-gold);
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            display: block;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="brand-title">Esports Tournament</div>
+    <div class="register-container">
+        <a href="@Url.Action("SampleLogin", "Account")" class="back-link">&larr; Back to login</a>
+        <h2>Register</h2>
+        <form method="post">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    </ul>
+                </div>
+            }
+            <div class="form-group">
+                <label for="UserName">Username</label>
+                <input type="text" class="form-control" id="UserName" name="UserName" value="Renztgm" required />
+            </div>
+            <div class="form-group">
+                <label for="Email">Email</label>
+                <input type="email" class="form-control" id="Email" name="Email" value="Renztgm" required />
+            </div>
+            <div class="form-group">
+                <label for="DisplayName">Display Name</label>
+                <input type="text" class="form-control" id="DisplayName" name="DisplayName" value="renz@email.com" required />
+            </div>
+            <div class="form-group">
+                <label for="Password">Password</label>
+                <input type="password" class="form-control" id="Password" name="Password" value="Renz12345!" required />
+            </div>
+            <div class="form-group">
+                <label for="ConfirmPassword">Confirm Password</label>
+                <input type="password" class="form-control" id="ConfirmPassword" name="ConfirmPassword" value="Renz12345!" required />
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
     </div>
-
-    <div class="form-group">
-        <label for="Email">Email</label>
-        <input type="email" class="form-control" id="Email" name="Email" value="Renztgm" required />
-    </div>
-
-    <div class="form-group">
-        <label for="DisplayName">Display Name</label>
-        <input type="text" class="form-control" id="DisplayName" name="DisplayName" value="renz@email.com" required />
-    </div>
-
-    <div class="form-group">
-        <label for="Password">Password</label>
-        <input type="password" class="form-control" id="Password" name="Password" value="Renz12345!" required />
-    </div>
-
-    <div class="form-group">
-        <label for="ConfirmPassword">Confirm Password</label>
-        <input type="password" class="form-control" id="ConfirmPassword" name="ConfirmPassword" value="Renz12345!"  required />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Register</button>
-</form>
+</body>
