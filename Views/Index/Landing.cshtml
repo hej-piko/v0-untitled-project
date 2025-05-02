@@ -1,4 +1,4 @@
-﻿@*
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
@@ -7,41 +7,122 @@
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        :root {
+            --gaming-dark: #07171B;
+            --gaming-teal-dark: #184655;
+            --gaming-teal: #35707F;
+            --gaming-teal-light: #8AC0BA;
+            --gaming-beige: #E2D9B6;
+            --gaming-gold: #E1A100;
+            --gaming-amber: #CF8500;
+            --gaming-orange: #B35C00;
+            --gaming-red-orange: #992D0B;
+            --gaming-red-dark: #7C2321;
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, var(--gaming-dark) 70%, var(--gaming-teal-dark) 100%);
+            color: var(--gaming-beige);
+            min-height: 100vh;
         }
-
+        .navbar {
+            background: linear-gradient(90deg, var(--gaming-dark), var(--gaming-teal-dark));
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--gaming-gold) !important;
+            letter-spacing: 2px;
+            font-size: 2rem;
+            text-shadow: 0 2px 8px var(--gaming-orange);
+        }
+        .navbar-nav .nav-link {
+            color: var(--gaming-beige) !important;
+            margin-right: 1rem;
+            transition: color 0.2s;
+        }
+        .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
+            color: var(--gaming-gold) !important;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, var(--gaming-gold), var(--gaming-orange));
+            border: none;
+            color: var(--gaming-dark);
+            font-weight: bold;
+            box-shadow: 0 2px 8px var(--gaming-orange);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, var(--gaming-amber), var(--gaming-gold));
+            box-shadow: 0 4px 16px var(--gaming-gold);
+            color: var(--gaming-dark);
+        }
         .hero {
-            background-color: #212529;
-            color: white;
+            background: linear-gradient(135deg, var(--gaming-teal-dark), var(--gaming-teal));
+            color: var(--gaming-beige);
             padding: 5rem 0;
             margin-bottom: 2rem;
+            border-bottom: 4px solid var(--gaming-gold);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
         }
-
+        .hero h1 {
+            text-shadow: 0 4px 24px var(--gaming-gold);
+        }
         .feature-card {
             border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--gaming-teal), var(--gaming-teal-light));
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3), 0 0 0 4px var(--gaming-dark);
+            transition: transform 0.3s, box-shadow 0.3s;
             height: 100%;
+            color: var(--gaming-dark);
         }
-
-            .feature-card:hover {
-                transform: translateY(-5px);
-            }
-
+        .feature-card:hover {
+            transform: scale(1.04) translateY(-5px);
+            box-shadow: 0 8px 32px var(--gaming-gold), 0 0 0 4px var(--gaming-gold);
+        }
         .feature-icon {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: #0d6efd;
+            color: var(--gaming-gold);
+            text-shadow: 0 2px 8px var(--gaming-orange);
+        }
+        .bg-light {
+            background: var(--gaming-dark) !important;
+            color: var(--gaming-beige) !important;
+        }
+        h2, h3, h4 {
+            color: var(--gaming-gold);
+            text-shadow: 0 2px 8px var(--gaming-orange);
+        }
+        .card {
+            background: var(--gaming-dark);
+            color: var(--gaming-beige);
+            border-radius: 1rem;
+        }
+        .form-control, .form-control:focus {
+            background: var(--gaming-teal-dark);
+            color: var(--gaming-beige);
+            border: 1px solid var(--gaming-gold);
+        }
+        .footer {
+            background: linear-gradient(90deg, var(--gaming-dark), var(--gaming-red-dark));
+            color: var(--gaming-beige);
+            padding: 2rem 0 0.5rem 0;
+            text-align: center;
+            border-top: 2px solid var(--gaming-gold);
+            margin-top: 3rem;
+        }
+        /* Glow effect for gaming vibe */
+        .glow {
+            text-shadow: 0 0 8px var(--gaming-gold), 0 0 16px var(--gaming-orange);
         }
     </style>
 </head>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">Esports Tournament</a>
+            <a class="navbar-brand" href="#">ES LEAGUE</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -177,7 +258,7 @@
 
     <footer class="bg-dark text-white py-4 mt-5">
         <div class="container text-center">
-            <p>© 2023 Esports Tournament Bracketing System. All rights reserved.</p>
+            <p> 2023 Esports Tournament Bracketing System. All rights reserved.</p>
         </div>
     </footer>
 

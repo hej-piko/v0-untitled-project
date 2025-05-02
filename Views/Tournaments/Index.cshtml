@@ -1,54 +1,196 @@
 @model IEnumerable<EsportsTournament.Models.Tournament>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
 @{
     ViewData["Title"] = "Tournaments";
+    Layout = "_Layout";
 }
-
-<h1>Tournaments</h1>
-
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New Tournament</a>
-</p>
-
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["Success"]
-    </div>
-}
-
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["Error"]
-    </div>
-}
-
-<div class="row">
-    @foreach (var item in Model)
+<style>
+    :root {
+        --gaming-dark: #07171B;
+        --gaming-teal-dark: #184655;
+        --gaming-teal: #35707F;
+        --gaming-teal-light: #8AC0BA;
+        --gaming-beige: #E2D9B6;
+        --gaming-gold: #E1A100;
+        --gaming-amber: #CF8500;
+        --gaming-orange: #B35C00;
+        --gaming-red-orange: #992D0B;
+        --gaming-red-dark: #7C2321;
+    }
+    html, body {
+        /* height: 100%; */
+    }
+    body {
+        /* min-height: 100vh; */
+        /* height: 100vh; */
+        overflow-y: auto;
+        background: linear-gradient(135deg, var(--gaming-dark) 70%, var(--gaming-teal-dark) 100%);
+        color: var(--gaming-beige);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .tournaments-outer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: calc(100vh - 60px); /* leave space for footer, adjust 60px as needed */
+        width: 100vw;
+        box-sizing: border-box;
+        padding-top: 2.5rem;
+        padding-bottom: 10rem; /* ensure content never touches footer */
+    }
+    .tournaments-header {
+        color: var(--gaming-gold);
+        font-size: 2.2rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    .tournaments-actions {
+        margin-bottom: 2rem;
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        max-width: 1100px;
+    }
+    .btn-create-tournament {
+        background: linear-gradient(90deg, var(--gaming-gold), var(--gaming-orange));
+        color: var(--gaming-dark) !important;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 2px 8px var(--gaming-orange);
+        transition: background 0.2s, box-shadow 0.2s;
+        padding: 0.85rem 2.5rem;
+        margin-left: auto;
+        margin-right: 0;
+        display: block;
+    }
+    .btn-create-tournament:hover {
+        background: linear-gradient(90deg, var(--gaming-amber), var(--gaming-gold));
+        box-shadow: 0 4px 16px var(--gaming-gold);
+        color: var(--gaming-dark) !important;
+    }
+    .tournament-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        justify-content: center;
+        width: 100%;
+        max-width: 1100px;
+    }
+    .tournament-card {
+        background: linear-gradient(135deg, var(--gaming-teal), var(--gaming-teal-light));
+        border-radius: 18px;
+        box-shadow: 0 8px 10px var(--gaming-gold), 0 0 0 4px var(--gaming-dark);
+        color: var(--gaming-dark);
+        display: flex;
+        flex-direction: column;
+        min-width: 320px;
+        max-width: 340px;
+        flex: 1 1 320px;
+        min-height: 0;
+        padding: 0;
+        margin-bottom: 1rem;
+    }
+    .tournament-card-header {
+        background: linear-gradient(90deg, var(--gaming-gold), var(--gaming-orange));
+        color: var(--gaming-dark) !important;
+        border-radius: 18px 18px 0 0;
+        font-weight: bold;
+        font-size: 1.2rem;
+        letter-spacing: 1px;
+        padding: 1rem 1.5rem;
+        border-bottom: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .tournament-card-header.closed {
+        background: linear-gradient(90deg, var(--gaming-teal-dark), var(--gaming-teal));
+        color: var(--gaming-beige) !important;
+    }
+    .tournament-card-body {
+        padding: 1.5rem;
+        background: transparent;
+    }
+    .tournament-card-footer {
+        padding: 1rem 1.5rem;
+        background: transparent;
+        border-radius: 0 0 18px 18px;
+        display: flex;
+        justify-content: flex-end;
+    }
+    .tournament-card .card-subtitle {
+        color: var(--gaming-gold);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    .tournament-card .card-text,
+    .tournament-card .card-text small {
+        color: var(--gaming-beige);
+    }
+    .alert-success, .alert-danger {
+        max-width: 480px;
+        margin: 0 auto 1.5rem auto;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+</style>
+<div class="tournaments-outer">
+    <div class="tournaments-header">Tournaments</div>
+     @if (TempData["Success"] != null)
     {
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-header @(item.IsOpen ? "bg-success" : "bg-secondary") text-white">
-                    <h5 class="mb-0">@item.Name</h5>
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
+    <div class="tournament-grid">
+        @foreach (var item in Model)
+        {
+            <div class="tournament-card">
+                <div class="tournament-card-header @(item.IsOpen ? "" : "closed")">
+                    <span>
+                        @{
+                            var name = item.Name ?? "";
+                            if (name.Length > 20)
+                            {
+                                var first = name.Substring(0, 17);
+                                var last = name.Substring(name.Length - 3);
+                                @((first + "..."))
+                            }
+                            else
+                            {
+                                @name
+                            }
+                        }
+                    </span>
+                    <span style="font-size:0.95rem; font-weight:600;">@(item.IsOpen ? "Open" : "Closed")</span>
                 </div>
-                <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">@item.Game</h6>
+                <div class="tournament-card-body">
+                    <div class="card-subtitle">@item.Game</div>
                     <p class="card-text">@(item.Description?.Length > 100 ? item.Description.Substring(0, 100) + "..." : item.Description)</p>
                     <p class="card-text">
-                        <small class="text-muted">
+                        <small>
                             Created by: @item.Creator.UserName<br />
                             Start Date: @item.StartDate.ToString("MMM dd, yyyy")<br />
-                            Max Participants: @item.MaxParticipants<br />
-                            Status: @(item.IsOpen ? "Open" : "Closed")
+                            Max Participants: @item.MaxParticipants
                         </small>
                     </p>
                 </div>
-                <div class="card-footer">
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">View Details</a>
+                <div class="tournament-card-footer">
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn-create-tournament" style="padding:0.5rem 1.2rem; font-size:1rem;">View Details</a>
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>
